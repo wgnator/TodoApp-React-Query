@@ -4,6 +4,6 @@ export function checkIsValidFormatEmail(inputValue: string) {
 }
 
 export function checkIsValidFormatPassword(inputValue: string) {
-  const REGEX_PW = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*()\-=_+[\]\\;',./{}|:"<>?`~]).{8,}$/;
+  const REGEX_PW = /[\s\S]{8,}/;
   return !!inputValue.match(REGEX_PW);
 }
