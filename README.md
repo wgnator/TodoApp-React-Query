@@ -12,7 +12,7 @@
 > yarn start # http://localhost:8080
 ```
 
-# 1-2)
+# 1-2) frontend 실행
 
 ```bash
 > cd frontend
