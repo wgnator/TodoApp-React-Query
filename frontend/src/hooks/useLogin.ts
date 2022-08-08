@@ -1,24 +1,29 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { usersDataService } from "../services/todos_api";
+import { usersDataService } from "../services/usersDBService";
 
 export default function useLogin() {
   const [userTokenState, setUserTokenState] = useState(localStorage.getItem("userToken"));
-  console.log(localStorage.getItem("userToken"));
+  const [userName, setUserName] = useState(localStorage.getItem("userName"));
+
   const login = (id: string, pw: string) => {
     if (!id || !pw) return;
     usersDataService
       .post("login", { email: id, password: pw })
       .then((response) => {
         localStorage.setItem("userToken", response.data.token);
+        localStorage.setItem("userName", id.split("@")[0]);
         setUserTokenState(localStorage.getItem("userToken"));
+        setUserName(localStorage.getItem("userName"));
       })
       .catch((error) => window.alert(error.response.data.details));
   };
 
   const logout = () => {
     localStorage.removeItem("userToken");
+    localStorage.removeItem("userName");
     setUserTokenState(localStorage.getItem("userToken"));
+    setUserName(localStorage.getItem("userName"));
   };
 
   const signUp = async (id: string, pw: string) => {
@@ -28,7 +33,7 @@ export default function useLogin() {
       window.alert("다시 입력하신 비밀번호가 맞지 않습니다.");
       return false;
     }
-    let isSignUpSuccessful = false;
+    let isSignUpSuccessful: boolean = false;
     await usersDataService
       .post("create", { email: id, password: pw })
       .then((response) => {
@@ -43,5 +48,5 @@ export default function useLogin() {
     return isSignUpSuccessful;
   };
 
-  return { userTokenState, login, logout, signUp };
+  return { userTokenState, userName, login, logout, signUp };
 }

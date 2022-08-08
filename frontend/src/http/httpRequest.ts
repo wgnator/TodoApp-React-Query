@@ -16,8 +16,8 @@ export default class httpRequest {
     return this.service.post(url, data);
   }
 
-  patch<T>(url: string, data: T) {
-    return this.service.patch(url, data);
+  put<T>(url: string, data: T) {
+    return this.service.put(url, data);
   }
 
   delete(url: string) {

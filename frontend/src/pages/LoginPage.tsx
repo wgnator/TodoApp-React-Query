@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import { AuthState } from "../contexts/authContext";
+import { AuthState } from "../contexts/AuthContext";
 import useLogin from "../hooks/useLogin";
 import { checkIsValidFormatEmail, checkIsValidFormatPassword } from "../utils/loginUtils";
 
@@ -40,25 +40,24 @@ function LoginPage() {
         >
           <InputContainer>
             <Input type="text" name="id" isValid={isUserInputValid.id} value={user.id} placeholder="아이디" onChange={handleInputChange} />
-            {!isUserInputValid.id && <InvalidMessage>{INVALID_MESSAGE.id}</InvalidMessage>}
+            {user.id && !isUserInputValid.id && <InvalidMessage>{INVALID_MESSAGE.id}</InvalidMessage>}
           </InputContainer>
           <InputContainer>
             <Input type="password" name="pw" isValid={isUserInputValid.pw} value={user.pw} placeholder="비밀번호" onChange={handleInputChange} />
-            {!isUserInputValid.pw && <InvalidMessage>{INVALID_MESSAGE.pw}</InvalidMessage>}
+            {user.pw && !isUserInputValid.pw && <InvalidMessage>{INVALID_MESSAGE.pw}</InvalidMessage>}
           </InputContainer>
 
           <ButtonsContainer>
-            <Button isActive={isUserInputValid.id && isUserInputValid.pw} onClick={() => login(user.id, user.pw)}>
-              로그인
-            </Button>
             <Button
               isActive={isUserInputValid.id && isUserInputValid.pw}
               onClick={() => {
-                signUp(user.id, user.pw);
-                clearForm();
+                signUp(user.id, user.pw).then((response: boolean) => response && clearForm());
               }}
             >
               회원가입
+            </Button>
+            <Button isActive={isUserInputValid.id && isUserInputValid.pw} onClick={() => login(user.id, user.pw)}>
+              로그인
             </Button>
           </ButtonsContainer>
         </Form>
