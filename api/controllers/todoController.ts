@@ -14,9 +14,7 @@ export const createTodo = async (req: Request, res: Response) => {
 
     return res.status(StatusCodes.OK).send(createResponse(todo));
   } else {
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .send(createError(TODO_VALIDATION_ERRORS.INVALID_VALUE));
+    return res.status(StatusCodes.BAD_REQUEST).send(createError(TODO_VALIDATION_ERRORS.INVALID_VALUE));
   }
 };
 
@@ -31,9 +29,7 @@ export const getTodos = async (req: Request, res: Response) => {
     }
     return res.status(StatusCodes.OK).send(createResponse(todos));
   } else {
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .send(createError(TODO_VALIDATION_ERRORS.TODO_SOMETHING_WRONG));
+    return res.status(StatusCodes.BAD_REQUEST).send(createError(TODO_VALIDATION_ERRORS.TODO_SOMETHING_WRONG));
   }
 };
 
@@ -45,26 +41,22 @@ export const getTodoById = (req: Request, res: Response) => {
   if (todo) {
     return res.status(StatusCodes.OK).send(createResponse(todo));
   } else {
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .send(createError(TODO_VALIDATION_ERRORS.TODO_SOMETHING_WRONG));
+    return res.status(StatusCodes.BAD_REQUEST).send(createError(TODO_VALIDATION_ERRORS.TODO_SOMETHING_WRONG));
   }
 };
 
 export const updateTodo = async (req: Request, res: Response) => {
   const todoId = req.params.id;
-  const { title, content } = req.body;
+  const { title, content, checked } = req.body;
 
   const todo = todoService.findTodo((todo) => todo.id === todoId);
 
   if (todo) {
-    await todoService.updateTodo(todo, { title, content });
+    await todoService.updateTodo(todo, { title, content, checked });
 
     return res.status(StatusCodes.OK).send(createResponse(todo));
   } else {
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .send(createError(TODO_VALIDATION_ERRORS.TODO_SOMETHING_WRONG));
+    return res.status(StatusCodes.BAD_REQUEST).send(createError(TODO_VALIDATION_ERRORS.TODO_SOMETHING_WRONG));
   }
 };
 
@@ -74,9 +66,7 @@ export const deleteTodo = async (req: Request, res: Response) => {
   const todo = todoService.findTodo((todo) => todo.id === todoId);
 
   if (!todo) {
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .send(createError(TODO_VALIDATION_ERRORS.TODO_SOMETHING_WRONG));
+    return res.status(StatusCodes.BAD_REQUEST).send(createError(TODO_VALIDATION_ERRORS.TODO_SOMETHING_WRONG));
   }
 
   await todoService.deleteTodo(todo);

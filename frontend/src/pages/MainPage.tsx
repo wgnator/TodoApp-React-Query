@@ -5,13 +5,16 @@ import useTodoDB from "../models/useTodoDB";
 import { BsPlusCircle } from "react-icons/bs";
 import { FiTrash2 } from "react-icons/fi";
 import { BiPencil } from "react-icons/bi";
+import { ImCheckmark2 } from "react-icons/im";
+import { FcCheckmark } from "react-icons/fc";
 import TodoInputForm from "../components/TodoInputForm";
 import { SentTodoData } from "../types/types";
+import ArrangementControllers from "../components/ArrangementControllers";
 
 export type ComposingStateType = { isComposing: boolean; itemID: string | null };
 
 export default function MainPage() {
-  const { data, getTodos, getTodoById, createTodo, updateTodo, deleteTodo } = useTodoDB();
+  const { todos, getTodos, createTodo, updateTodo, deleteTodo, isLoading, reorderTodosBy, filterTodosByChecked, filterTodosBy } = useTodoDB();
   const { showItemID } = useParams();
   const navigate = useNavigate();
 
@@ -43,10 +46,11 @@ export default function MainPage() {
 
   return (
     <Container>
+      <ArrangementControllers controllers={{ reorderTodosBy, filterTodosByChecked, filterTodosBy }} />
       <CreateItem isComposing={composingState.isComposing} onClick={() => !composingState.isComposing && setComposingState({ isComposing: true, itemID: null })}>
-        {composingState.isComposing && !composingState.itemID ? <TodoInputForm prevData={null} callback={createTodoCallback} /> : <BsPlusCircle />}
+        {composingState.isComposing && !composingState.itemID ? <TodoInputForm prevData={null} callback={createTodoCallback} /> : <PlusCircle />}
       </CreateItem>
-      {data.map((item) => (
+      {todos.map((item) => (
         <Item
           key={item.id}
           onClick={(event) => {
@@ -55,16 +59,24 @@ export default function MainPage() {
           }}
         >
           {composingState.isComposing && composingState.itemID === item.id ? (
-            <TodoInputForm prevData={item} callback={(data) => updateTodoCallback(item.id, data)} />
+            <TodoInputForm prevData={item} callback={(todos) => updateTodoCallback(item.id, todos)} />
           ) : (
             <>
               <Icons>
+                <ImCheckmark2
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    console.log(item);
+                    updateTodo(item.id, { ...item, checked: !item.checked });
+                  }}
+                />
                 <BiPencil onClick={() => setComposingState({ isComposing: true, itemID: item.id })} />
                 <FiTrash2 onClick={() => window.confirm("정말로 삭제하시겠습니까?") && deleteTodo(item.id)} />
               </Icons>
               <Title>{item.title}</Title>
               {showingContentItemID === item.id && <Content>{item.content}</Content>}
               <DateInfo>최근 수정: {new Date(item.updatedAt).toLocaleString()}</DateInfo>
+              {item.checked && <Checkmark />}
             </>
           )}
         </Item>
@@ -92,12 +104,6 @@ const Item = styled.div`
   flex-direction: column;
   justify-content: space-between;
   transition: height 1s;
-  > svg {
-    align-self: center;
-    width: 2rem;
-    height: 2rem;
-    margin: 1rem;
-  }
 `;
 
 const CreateItem = styled(Item)<{ isComposing: boolean }>`
@@ -115,12 +121,18 @@ const CreateItem = styled(Item)<{ isComposing: boolean }>`
   `}
 `;
 
+const PlusCircle = styled(BsPlusCircle)`
+  align-self: center;
+  width: 2rem;
+  height: 2rem;
+  margin: 1rem;
+`;
 const Icons = styled.div`
   position: absolute;
   top: 0.5rem;
   right: 0.5rem;
   height: 1rem;
-  width: 2.5rem;
+  width: 4rem;
   display: flex;
   justify-content: space-between;
 `;
@@ -132,4 +144,12 @@ const DateInfo = styled.div`
 `;
 const Content = styled.div`
   margin: 1rem 0;
+`;
+
+const Checkmark = styled(FcCheckmark)`
+  position: absolute;
+  width: 3rem;
+  height: 3rem;
+  left: calc((100% - 3rem) / 2);
+  top: calc((100% - 3rem) / 2 - 5px);
 `;

@@ -7,7 +7,10 @@ export default function NavBar() {
   return (
     <Container>
       <Title>ToDo App</Title>
-      <UserInfo>{userName} 님, 안녕하세요!</UserInfo>
+      <UserInfo>
+        <span>{userName}</span>
+        <span>님</span> <span>, 안녕하세요!</span>
+      </UserInfo>
       <LogoutButton onClick={() => logout()}>로그아웃</LogoutButton>
     </Container>
   );
@@ -28,10 +31,27 @@ const Container = styled.div`
 
 const Title = styled.h1`
   width: 70%;
+  @media (max-width: 720px) {
+    font-size: 2rem;
+  }
 `;
 
 const UserInfo = styled.div`
   flex-shrink: 0;
+  @media (max-width: 720px) {
+    width: fit-content;
+
+    > span:last-child {
+      display: none;
+    }
+    > span:first-child {
+      width: 3rem;
+      display: inline-block;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      /* overflow: hidden; */
+    }
+  }
 `;
 
 const LogoutButton = styled.button`
