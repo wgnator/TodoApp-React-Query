@@ -53,6 +53,7 @@ export const create = <T>(content: any): T => {
   const timestamp = new Date().toISOString();
   return {
     ...content,
+    checked: false,
     id: nanoid(),
     createdAt: timestamp,
     updatedAt: timestamp,

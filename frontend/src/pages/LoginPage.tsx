@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { AuthState } from "../contexts/AuthContext";
-import useLogin from "../hooks/useLogin";
 import { checkIsValidFormatEmail, checkIsValidFormatPassword } from "../utils/loginUtils";
 
 const INVALID_MESSAGE = {
