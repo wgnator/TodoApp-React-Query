@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import useTodoDB from "../models/useTodoDB";
+import useSortedTodos from "../models/useSortedTodos";
 import { BsPlusCircle } from "react-icons/bs";
 import { FiTrash2 } from "react-icons/fi";
 import { BiPencil } from "react-icons/bi";
@@ -9,12 +10,13 @@ import { ImCheckmark2 } from "react-icons/im";
 import { FcCheckmark } from "react-icons/fc";
 import TodoInputForm from "../components/TodoInputForm";
 import { SentTodoData } from "../types/types";
-import ArrangementControllers from "../components/ArrangementControllers";
+import SortControllers from "../components/SortControllers";
 
 export type ComposingStateType = { isComposing: boolean; itemID: string | null };
 
 export default function MainPage() {
-  const { todos, getTodos, createTodo, updateTodo, deleteTodo, isLoading, reorderTodosBy, filterTodosByChecked, filterTodosBy } = useTodoDB();
+  const { todos, getTodos, createTodo, updateTodo, deleteTodo, isLoading } = useTodoDB();
+  const { sortedTodos, orderTodosBy, filterTodosByChecked, filterTodosByString } = useSortedTodos(todos);
   const { showItemID } = useParams();
   const navigate = useNavigate();
 
@@ -46,11 +48,11 @@ export default function MainPage() {
 
   return (
     <Container>
-      <ArrangementControllers controllers={{ reorderTodosBy, filterTodosByChecked, filterTodosBy }} />
+      <SortControllers controllers={{ orderTodosBy, filterTodosByChecked, filterTodosByString }} />
       <CreateItem isComposing={composingState.isComposing} onClick={() => !composingState.isComposing && setComposingState({ isComposing: true, itemID: null })}>
         {composingState.isComposing && !composingState.itemID ? <TodoInputForm prevData={null} callback={createTodoCallback} /> : <PlusCircle />}
       </CreateItem>
-      {todos.map((item) => (
+      {sortedTodos.map((item) => (
         <Item
           key={item.id}
           onClick={(event) => {
@@ -59,7 +61,7 @@ export default function MainPage() {
           }}
         >
           {composingState.isComposing && composingState.itemID === item.id ? (
-            <TodoInputForm prevData={item} callback={(todos) => updateTodoCallback(item.id, todos)} />
+            <TodoInputForm prevData={item} callback={(updatedTodo) => updateTodoCallback(item.id, updatedTodo)} />
           ) : (
             <>
               <Icons>
