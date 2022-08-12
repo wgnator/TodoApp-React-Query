@@ -31,7 +31,7 @@ function LoginPage() {
   return (
     <Container>
       <LoginBox>
-        <Title>ToDos App</Title>
+        <Title>ToDo App</Title>
         <Form
           onSubmit={(event) => {
             event.preventDefault();
@@ -112,6 +112,7 @@ const Input = styled.input<{ isValid: boolean }>`
 `;
 const InvalidMessage = styled.div`
   height: 30%;
+  margin-top: 0.3rem;
   font-size: 0.7rem;
   text-align: end;
   color: #ff6262;
