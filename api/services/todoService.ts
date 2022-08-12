@@ -19,7 +19,7 @@ export const findTodo = (predicate: (todo: Todo) => boolean) => {
 };
 
 export const updateTodo = async (todo: Todo, todoValue: Partial<Todo>) => {
-  update<Todo>(Object.assign(todo, todoValue));
+  Object.assign(todo, update<Todo>({ ...todo, todoValue })); //fixed
 
   await db.write();
 
@@ -27,9 +27,7 @@ export const updateTodo = async (todo: Todo, todoValue: Partial<Todo>) => {
 };
 
 export const deleteTodo = async (todoToDelete: Todo) => {
-  const filteredTodos = db.data?.todos.filter(
-    (todo) => todo.id !== todoToDelete.id
-  )!;
+  const filteredTodos = db.data?.todos.filter((todo) => todo.id !== todoToDelete.id)!;
 
   (db.data as Data).todos = filteredTodos;
 

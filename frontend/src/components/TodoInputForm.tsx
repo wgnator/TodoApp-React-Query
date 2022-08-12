@@ -36,11 +36,15 @@ const Form = styled.form`
 
 const Input = styled.input`
   height: 2rem;
+  border-radius: 8px;
+  padding: 0.5rem;
 `;
 
 const TextArea = styled.textarea`
   height: 5rem;
+  border-radius: 8px;
   resize: none;
+  padding: 0.5rem;
 `;
 
 const SubmitButton = styled.button`
