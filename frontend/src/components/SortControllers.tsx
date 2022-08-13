@@ -1,9 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { FilterTodosByCheckedType, FilterTodosByStringType, OrderTodosByType } from "../models/useSortedTodos";
 import SelectBox from "./SelectBox";
 import { BiSearch } from "react-icons/bi";
-
+import Debouncer from "../utils/Debouncer";
+import { DEBOUNCER_DELAY_TIME } from "../consts/consts";
 type SortControllersPropsType = {
   controllers: {
     orderTodosBy: OrderTodosByType;
@@ -26,8 +27,8 @@ const initialSelectedOptionsState: SelectedOptionsType = {
 export default function SortControllers({ controllers }: SortControllersPropsType) {
   const [selectedOptions, setSelectedOptions] = useState<SelectedOptionsType>(initialSelectedOptionsState);
 
-  const handleInputOnChange = (event: React.ChangeEvent) => {
-    setSelectedOptions({ ...selectedOptions, filterByStringIncluding: (event.target as HTMLInputElement).value });
+  const handleInputOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedOptions({ ...selectedOptions, filterByStringIncluding: event.target.value });
   };
 
   const handleOnClickOrderOption = (criteria: "updatedAt" | "createdAt", order: "newestFirst" | "oldestFirst") => {
@@ -38,19 +39,18 @@ export default function SortControllers({ controllers }: SortControllersPropsTyp
     setSelectedOptions({ ...selectedOptions, filterByIsChecked: selectedCheckedValue });
   };
 
+  const handleInputChangeWithDebouncer = new Debouncer(handleInputOnChange, DEBOUNCER_DELAY_TIME).build();
+
   useEffect(() => {
     controllers.orderTodosBy(selectedOptions.orderBy.criteria, selectedOptions.orderBy.order);
-    console.log(selectedOptions.orderBy);
   }, [selectedOptions.orderBy]);
 
   useEffect(() => {
     controllers.filterTodosByString(null, selectedOptions.filterByStringIncluding);
-    console.log(selectedOptions.filterByStringIncluding);
   }, [selectedOptions.filterByStringIncluding]);
 
   useEffect(() => {
     controllers.filterTodosByChecked(selectedOptions.filterByIsChecked);
-    console.log(selectedOptions.filterByIsChecked);
   }, [selectedOptions.filterByIsChecked]);
 
   return (
@@ -89,7 +89,7 @@ export default function SortControllers({ controllers }: SortControllersPropsTyp
         <label htmlFor="searchString">
           <BiSearch />
         </label>
-        <input onChange={handleInputOnChange} type="text" id="searchString" />
+        <input onChange={handleInputChangeWithDebouncer} type="text" id="searchString" />
       </FilterInput>
       <CheckedFilterSelection>
         <Option name="null" selected={selectedOptions.filterByIsChecked === null} onClick={() => handleOnClickFilterCheckedOption(null)}>

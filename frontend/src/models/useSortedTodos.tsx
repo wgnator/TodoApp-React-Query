@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { ReceivedTodoData } from "../types/types";
 
 export type OrderTodosByType = (criterion: "updatedAt" | "createdAt", order: "newestFirst" | "oldestFirst") => void;
@@ -9,8 +9,12 @@ export default function useSortedTodos(todos: ReceivedTodoData[]) {
   const [sortedTodos, setSortedTodos] = useState(todos);
 
   useEffect(() => {
-    orderTodosBy("updatedAt", "newestFirst");
+    setSortedTodos(todos);
   }, [todos]);
+
+  useEffect(() => {
+    orderTodosBy("updatedAt", "newestFirst");
+  }, []);
 
   const orderTodosBy: OrderTodosByType = (criterion, order) =>
     setSortedTodos(

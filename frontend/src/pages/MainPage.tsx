@@ -11,6 +11,8 @@ import { FcCheckmark } from "react-icons/fc";
 import TodoInputForm from "../components/TodoInputForm";
 import { SentTodoData } from "../types/types";
 import SortControllers from "../components/SortControllers";
+import LoadingSpinner from "../components/LoadingSpinner";
+import { theme } from "../styles/theme";
 
 export type ComposingStateType = { isComposing: boolean; itemID: string | null };
 
@@ -68,7 +70,6 @@ export default function MainPage() {
                 <ImCheckmark2
                   onClick={(event) => {
                     event.stopPropagation();
-                    console.log(item);
                     updateTodo(item.id, { ...item, checked: !item.checked });
                   }}
                 />
@@ -83,6 +84,11 @@ export default function MainPage() {
           )}
         </Item>
       ))}
+      {isLoading && (
+        <Veil>
+          <Circle />
+        </Veil>
+      )}
     </Container>
   );
 }
@@ -154,4 +160,18 @@ const Checkmark = styled(FcCheckmark)`
   height: 3rem;
   left: calc((100% - 3rem) / 2);
   top: calc((100% - 3rem) / 2 - 5px);
+`;
+
+const Veil = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+const Circle = styled(LoadingSpinner).attrs((props) => ({ color: theme.primaryColor, backgroundColor: theme.backgroundColor }))`
+  background-color: transparent;
 `;

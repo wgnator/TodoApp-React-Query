@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 
 export default function useDetectOutsideClick(targetElements: React.MutableRefObject<HTMLElement | undefined>[], callback: () => void) {
   useEffect(() => {
-    console.log(targetElements);
     const hasClickedOutsideElement = (event: MouseEvent, targetElement: HTMLElement | undefined) => {
       return !!(targetElement && !targetElement.contains(<Node>event?.target));
     };
