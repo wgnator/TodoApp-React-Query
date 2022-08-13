@@ -5,6 +5,5 @@ import LoginPage from "../pages/LoginPage";
 
 export default function ProtectedRoutes() {
   const { userTokenState } = useContext(AuthState);
-  console.log(userTokenState);
   return userTokenState ? <Layout /> : <LoginPage />;
 }

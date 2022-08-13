@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, useParams } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import MainPage from "../pages/MainPage";
 import ProtectedRoutes from "./ProtectedRoutes";
 

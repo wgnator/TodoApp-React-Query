@@ -18,7 +18,7 @@ export default function SelectBox({ children }: { children: ReactElement[] }) {
         setIsSelecting(!isSelecting);
       }}
     >
-      {isSelecting ? <OptionsWrapper>{children}</OptionsWrapper> : <SelectedOption>{children.find((child) => child.props.selected)}</SelectedOption>}
+      {isSelecting ? <OptionsWrapper>{children}</OptionsWrapper> : <SelectedOption>{children.find((child) => child.props.selected)?.props.children}</SelectedOption>}
 
       <TriangleDown />
     </Container>

@@ -16,7 +16,7 @@ export default function useTodoDB() {
     }
   }, [token]);
 
-  const processModelWithUI = (callback: Promise<void>, reload: boolean) => {
+  const progressModelWithUserInteraction = (callback: Promise<void>, reload: boolean) => {
     setIsLoading(true);
     callback
       .catch((error) => window.alert(error.message))
@@ -27,26 +27,26 @@ export default function useTodoDB() {
   };
 
   const getTodos = () => {
-    processModelWithUI(
+    progressModelWithUserInteraction(
       todosDBService.get("/", { headers: { Authorization: token } }).then((response) => setTodos(response.data.data)),
       false
     );
   };
 
   const getTodoById = (id: string) => {
-    processModelWithUI(
+    progressModelWithUserInteraction(
       todosDBService.get(`/${id}`, { headers: { Authorization: token } }).then((response) => setTodos(response.data.data)),
       false
     );
   };
   const createTodo = (todo: SentTodoData) => {
-    processModelWithUI(todosDBService.post("/", todo, { headers: { Authorization: token } }), true);
+    progressModelWithUserInteraction(todosDBService.post("/", todo, { headers: { Authorization: token } }), true);
   };
   const updateTodo = (id: string, todo: SentTodoData) => {
-    processModelWithUI(todosDBService.put(`/${id}`, todo, { headers: { Authorization: token } }), true);
+    progressModelWithUserInteraction(todosDBService.put(`/${id}`, todo, { headers: { Authorization: token } }), true);
   };
   const deleteTodo = (id: string) => {
-    processModelWithUI(todosDBService.delete(`/${id}`, { headers: { Authorization: token } }), true);
+    progressModelWithUserInteraction(todosDBService.delete(`/${id}`, { headers: { Authorization: token } }), true);
   };
   return { todos, getTodos, getTodoById, createTodo, updateTodo, deleteTodo, isLoading };
 }
