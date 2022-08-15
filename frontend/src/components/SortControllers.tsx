@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { FilterTodosByCheckedType, FilterTodosByStringType, OrderTodosByType } from "../models/useSortedTodos";
+import { FilterTodosByCheckedType, FilterTodosByStringType, OrderTodosByType } from "../hooks/useSortedTodos";
 import SelectBox from "./SelectBox";
 import { BiSearch } from "react-icons/bi";
 import Debouncer from "../utils/Debouncer";
 import { DEBOUNCER_DELAY_TIME } from "../consts/consts";
+
 type SortControllersPropsType = {
   controllers: {
     orderTodosBy: OrderTodosByType;

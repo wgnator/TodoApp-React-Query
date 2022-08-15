@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
+import useTodoQuery from "../models/useTodoQuery";
+
 import { ReceivedTodoData } from "../types/types";
 
 export type OrderTodosByType = (criterion: "updatedAt" | "createdAt", order: "newestFirst" | "oldestFirst") => void;
 export type FilterTodosByCheckedType = (isValue: null | boolean) => void;
 export type FilterTodosByStringType = (criterion: "title" | "content" | null, searchString: string) => void;
 
-export default function useSortedTodos(todos: ReceivedTodoData[]) {
+export default function useSortedTodos() {
+  const { todos } = useTodoQuery();
+
   const [sortedTodos, setSortedTodos] = useState(todos);
 
   useEffect(() => {
@@ -17,15 +21,17 @@ export default function useSortedTodos(todos: ReceivedTodoData[]) {
   }, []);
 
   const orderTodosBy: OrderTodosByType = (criterion, order) =>
+    todos &&
     setSortedTodos(
       order === "newestFirst"
         ? [...todos].sort((a: ReceivedTodoData, b: ReceivedTodoData) => new Date(b[criterion]).getTime() - new Date(a[criterion]).getTime())
         : [...todos].sort((a: ReceivedTodoData, b: ReceivedTodoData) => new Date(a[criterion]).getTime() - new Date(b[criterion]).getTime())
     );
 
-  const filterTodosByChecked: FilterTodosByCheckedType = (isValue) => setSortedTodos(isValue === null ? todos : todos.filter((todo: ReceivedTodoData) => todo.checked === isValue));
+  const filterTodosByChecked: FilterTodosByCheckedType = (isValue) => setSortedTodos(isValue === null ? todos : todos?.filter((todo: ReceivedTodoData) => todo.checked === isValue));
 
   const filterTodosByString: FilterTodosByStringType = (criterion, searchString) =>
+    todos &&
     setSortedTodos(
       criterion === null
         ? todos.filter((todo: ReceivedTodoData) => todo.title.includes(searchString) || todo.content.includes(searchString))

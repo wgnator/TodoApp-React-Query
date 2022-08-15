@@ -10,4 +10,5 @@ export interface SentTodoData {
   title?: string;
   content?: string;
   checked?: boolean;
+  id: string;
 }
