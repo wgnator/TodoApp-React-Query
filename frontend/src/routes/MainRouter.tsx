@@ -8,7 +8,7 @@ export default function MainRouter() {
       <Routes>
         <Route path="/" element={<ProtectedRoutes />}>
           <Route path="" element={<MainPage />} />
-          <Route path=":showItemID" element={<MainPage />} />
+          <Route path=":showingTodoIDParam" element={<MainPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

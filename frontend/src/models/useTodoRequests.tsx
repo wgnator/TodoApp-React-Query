@@ -16,7 +16,6 @@ export default function useTodoRequests() {
 
   const getTodos = async () =>
     await todosDBService.get<{ data: ReceivedTodoData[] }>("/", { headers: { Authorization: token } }).then((response) => {
-      console.log(response, response.data, response.data.data);
       return response.data.data;
     });
 

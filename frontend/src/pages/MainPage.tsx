@@ -1,32 +1,34 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
-
-import useSortedTodos from "../hooks/useSortedTodos";
+import sortTodoFunctions from "../utils/sortTodoFunctions";
 import { BsPlusCircle } from "react-icons/bs";
 import { FiTrash2 } from "react-icons/fi";
 import { BiPencil } from "react-icons/bi";
 import { ImCheckmark2 } from "react-icons/im";
 import { FcCheckmark } from "react-icons/fc";
 import TodoInputForm from "../components/TodoInputForm";
-import { SentTodoData } from "../types/types";
-import SortControllers from "../components/SortControllers";
+import { SelectedOptionsType, SentTodoData } from "../types/types";
+import SortControllerComponents from "../components/SortControllerComponents";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { theme } from "../styles/theme";
 import useTodoQuery from "../models/useTodoQuery";
+import { initialSelectedOptionsState } from "../consts/initialStates";
 
 export type ComposingStateType = { isComposing: boolean; todoID: string | null };
 
 export default function MainPage() {
-  const { createTodoMutation, updateTodoMutation, deleteTodoMutation } = useTodoQuery();
-  const { sortedTodos, orderTodosBy, filterTodosByChecked, filterTodosByString } = useSortedTodos();
-  const { showingTodoIDFromParams } = useParams();
+  const { todos, createTodoMutation, updateTodoMutation, deleteTodoMutation } = useTodoQuery();
+  const { sortTodos } = sortTodoFunctions();
+  const { showingTodoIDParam } = useParams();
   const navigate = useNavigate();
   const [showingContentTodoID, setShowingContentTodoID] = useState<string | null>(null);
   const [composingState, setComposingState] = useState<ComposingStateType>({ isComposing: false, todoID: null });
+  const [selectedOptions, setSelectedOptions] = useState<SelectedOptionsType>(initialSelectedOptionsState);
 
   const toggleShowContent = (id: string) => {
-    navigate("/" + id);
+    if (showingTodoIDParam === showingContentTodoID) navigate("/");
+    else navigate("/" + id);
   };
 
   const createTodoCallback = (composedData?: SentTodoData) => {
@@ -39,18 +41,19 @@ export default function MainPage() {
   };
 
   useEffect(() => {
-    if (showingTodoIDFromParams) setShowingContentTodoID(showingTodoIDFromParams);
+    if (showingTodoIDParam) setShowingContentTodoID(showingTodoIDParam);
     else setShowingContentTodoID(null);
-  }, [showingTodoIDFromParams]);
+    console.log(showingContentTodoID, showingTodoIDParam);
+  }, [showingTodoIDParam]);
 
   return (
     <Container>
-      <SortControllers controllers={{ orderTodosBy, filterTodosByChecked, filterTodosByString }} />
+      <SortControllerComponents selectedOptions={selectedOptions} setSelectedOptions={setSelectedOptions} />
       <CreateTodo isComposing={composingState.isComposing} onClick={() => !composingState.isComposing && setComposingState({ isComposing: true, todoID: null })}>
         {composingState.isComposing && !composingState.todoID ? <TodoInputForm prevData={null} callback={createTodoCallback} /> : <PlusCircle />}
       </CreateTodo>
-      {sortedTodos &&
-        sortedTodos.map((todo) => (
+      {todos &&
+        sortTodos(todos, selectedOptions).map((todo) => (
           <Todo
             key={todo.id}
             onClick={(event) => {

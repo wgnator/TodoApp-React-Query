@@ -12,3 +12,10 @@ export interface SentTodoData {
   checked?: boolean;
   id: string;
 }
+
+export type OrderByType = { criterion: "updatedAt" | "createdAt"; order: "newestFirst" | "oldestFirst" };
+export type SelectedOptionsType = {
+  orderBy: OrderByType;
+  filterByStringIncluding: string;
+  filterByIsChecked: boolean | null;
+};
