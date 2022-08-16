@@ -1,94 +1,93 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
-import useTodoDB from "../models/useTodoDB";
-import useSortedTodos from "../models/useSortedTodos";
+import sortTodoFunctions from "../utils/sortTodoFunctions";
 import { BsPlusCircle } from "react-icons/bs";
 import { FiTrash2 } from "react-icons/fi";
 import { BiPencil } from "react-icons/bi";
 import { ImCheckmark2 } from "react-icons/im";
 import { FcCheckmark } from "react-icons/fc";
 import TodoInputForm from "../components/TodoInputForm";
-import { SentTodoData } from "../types/types";
-import SortControllers from "../components/SortControllers";
+import { SelectedOptionsType, SentTodoData } from "../types/types";
+import SortControllerComponents from "../components/SortControllerComponents";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { theme } from "../styles/theme";
+import useTodoQuery from "../models/useTodoQuery";
+import { initialSelectedOptionsState } from "../consts/initialStates";
 
-export type ComposingStateType = { isComposing: boolean; itemID: string | null };
+export type ComposingStateType = { isComposing: boolean; todoID: string | null };
 
 export default function MainPage() {
-  const { todos, getTodos, createTodo, updateTodo, deleteTodo, isLoading } = useTodoDB();
-  const { sortedTodos, orderTodosBy, filterTodosByChecked, filterTodosByString } = useSortedTodos(todos);
-  const { showItemID } = useParams();
+  const { todos, createTodoMutation, updateTodoMutation, deleteTodoMutation } = useTodoQuery();
+  const { sortTodos } = sortTodoFunctions();
+  const { showingTodoIDParam } = useParams();
   const navigate = useNavigate();
-
-  const [showingContentItemID, setShowingContentItemID] = useState<string | null>(null);
-  const [composingState, setComposingState] = useState<ComposingStateType>({ isComposing: false, itemID: null });
+  const [showingContentTodoID, setShowingContentTodoID] = useState<string | null>(null);
+  const [composingState, setComposingState] = useState<ComposingStateType>({ isComposing: false, todoID: null });
+  const [selectedOptions, setSelectedOptions] = useState<SelectedOptionsType>(initialSelectedOptionsState);
 
   const toggleShowContent = (id: string) => {
-    if (!showItemID) navigate("/" + id);
-    else navigate("/");
+    if (showingTodoIDParam === showingContentTodoID) navigate("/");
+    else navigate("/" + id);
   };
 
   const createTodoCallback = (composedData?: SentTodoData) => {
-    if (composedData) createTodo(composedData);
-    setComposingState({ isComposing: false, itemID: null });
+    if (composedData) createTodoMutation.mutate(composedData);
+    setComposingState({ isComposing: false, todoID: null });
   };
   const updateTodoCallback = (id?: string, composedData?: SentTodoData) => {
-    if (id && composedData) updateTodo(id, composedData);
-    setComposingState({ isComposing: false, itemID: null });
+    if (id && composedData) updateTodoMutation.mutate(composedData);
+    setComposingState({ isComposing: false, todoID: null });
   };
 
   useEffect(() => {
-    getTodos();
-  }, []);
-
-  useEffect(() => {
-    if (showItemID) setShowingContentItemID(showItemID);
-    else setShowingContentItemID(null);
-  }, [showItemID]);
+    if (showingTodoIDParam) setShowingContentTodoID(showingTodoIDParam);
+    else setShowingContentTodoID(null);
+    console.log(showingContentTodoID, showingTodoIDParam);
+  }, [showingTodoIDParam]);
 
   return (
     <Container>
-      <SortControllers controllers={{ orderTodosBy, filterTodosByChecked, filterTodosByString }} />
-      <CreateItem isComposing={composingState.isComposing} onClick={() => !composingState.isComposing && setComposingState({ isComposing: true, itemID: null })}>
-        {composingState.isComposing && !composingState.itemID ? <TodoInputForm prevData={null} callback={createTodoCallback} /> : <PlusCircle />}
-      </CreateItem>
-      {sortedTodos.map((item) => (
-        <Item
-          key={item.id}
-          onClick={(event) => {
-            event.stopPropagation();
-            toggleShowContent(item.id);
-          }}
-        >
-          {composingState.isComposing && composingState.itemID === item.id ? (
-            <TodoInputForm prevData={item} callback={(updatedTodo) => updateTodoCallback(item.id, updatedTodo)} />
-          ) : (
-            <>
-              <Icons>
-                <ImCheckmark2
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    updateTodo(item.id, { ...item, checked: !item.checked });
-                  }}
-                />
-                <BiPencil onClick={() => setComposingState({ isComposing: true, itemID: item.id })} />
-                <FiTrash2 onClick={() => window.confirm("정말로 삭제하시겠습니까?") && deleteTodo(item.id)} />
-              </Icons>
-              <Title>{item.title}</Title>
-              {showingContentItemID === item.id && <Content>{item.content}</Content>}
-              <DateInfo>최근 수정: {new Date(item.updatedAt).toLocaleString()}</DateInfo>
-              {item.checked && <Checkmark />}
-            </>
-          )}
-        </Item>
-      ))}
-      {isLoading && (
+      <SortControllerComponents selectedOptions={selectedOptions} setSelectedOptions={setSelectedOptions} />
+      <CreateTodo isComposing={composingState.isComposing} onClick={() => !composingState.isComposing && setComposingState({ isComposing: true, todoID: null })}>
+        {composingState.isComposing && !composingState.todoID ? <TodoInputForm prevData={null} callback={createTodoCallback} /> : <PlusCircle />}
+      </CreateTodo>
+      {todos &&
+        sortTodos(todos, selectedOptions).map((todo) => (
+          <Todo
+            key={todo.id}
+            onClick={(event) => {
+              event.stopPropagation();
+              toggleShowContent(todo.id);
+            }}
+          >
+            {composingState.isComposing && composingState.todoID === todo.id ? (
+              <TodoInputForm prevData={todo} callback={(updatedTodo) => updateTodoCallback(todo.id, updatedTodo)} />
+            ) : (
+              <>
+                <Icons>
+                  <ImCheckmark2
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      updateTodoMutation.mutate({ ...todo, checked: !todo.checked });
+                    }}
+                  />
+                  <BiPencil onClick={() => setComposingState({ isComposing: true, todoID: todo.id })} />
+                  <FiTrash2 onClick={() => window.confirm("정말로 삭제하시겠습니까?") && deleteTodoMutation.mutate(todo)} />
+                </Icons>
+                <Title>{todo.title}</Title>
+                {showingContentTodoID === todo.id && <Content>{todo.content}</Content>}
+                <DateInfo>최근 수정: {new Date(todo.updatedAt).toLocaleString()}</DateInfo>
+                {todo.checked && <Checkmark />}
+              </>
+            )}
+          </Todo>
+        ))}
+      {/* {isLoading && (
         <Veil>
           <Circle />
         </Veil>
-      )}
+      )} */}
     </Container>
   );
 }
@@ -101,7 +100,7 @@ const Container = styled.div`
   gap: 1rem;
 `;
 
-const Item = styled.div`
+const Todo = styled.div`
   position: relative;
   width: 100%;
   min-height: 5rem;
@@ -114,7 +113,7 @@ const Item = styled.div`
   transition: height 1s;
 `;
 
-const CreateItem = styled(Item)<{ isComposing: boolean }>`
+const CreateTodo = styled(Todo)<{ isComposing: boolean }>`
   ${(props) =>
     !props.isComposing &&
     `    
