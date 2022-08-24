@@ -12,7 +12,7 @@ import { SelectedOptionsType, SentTodoData } from "../types/types";
 import SortControllerComponents from "../components/SortControllerComponents";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { theme } from "../styles/theme";
-import useTodoQuery from "../models/useTodoQuery";
+import useTodoQuery from "../hooks/fetch/useTodoQuery";
 import { initialSelectedOptionsState } from "../consts/initialStates";
 
 export type ComposingStateType = { isComposing: boolean; todoID: string | null };
@@ -151,6 +151,9 @@ const DateInfo = styled.div`
 `;
 const Content = styled.div`
   margin: 1rem 0;
+  width: 100%;
+  word-wrap: break-word;
+  line-height: 1.5rem;
 `;
 
 const Checkmark = styled(FcCheckmark)`

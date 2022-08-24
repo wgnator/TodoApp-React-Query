@@ -1,51 +1,44 @@
+import { AxiosResponse } from "axios";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { usersDataService } from "../services/usersDBService";
 
 export default function useLogin() {
   const [userTokenState, setUserTokenState] = useState(localStorage.getItem("userToken"));
   const [userName, setUserName] = useState(localStorage.getItem("userName"));
 
-  const login = (id: string, pw: string) => {
-    if (!id || !pw) return;
-    usersDataService
-      .post("login", { email: id, password: pw })
-      .then((response) => {
+  const login = (id: string, pw: string): Promise<void | AxiosResponse | Error> => {
+    if (!id || !pw) return new Promise(() => new Error("일치하는 아이디 또는 비밀번호가 없습니다."));
+    else
+      return usersDataService.post("login", { email: id, password: pw }).then((response) => {
         localStorage.setItem("userToken", response.data.token);
         localStorage.setItem("userName", id.split("@")[0]);
         setUserTokenState(localStorage.getItem("userToken"));
         setUserName(localStorage.getItem("userName"));
-      })
-      .catch((error) => window.alert(error.response.data.details));
+      });
   };
 
-  const logout = () => {
+  const logout = (): void => {
     localStorage.removeItem("userToken");
     localStorage.removeItem("userName");
     setUserTokenState(localStorage.getItem("userToken"));
     setUserName(localStorage.getItem("userName"));
   };
 
-  const signUp = async (id: string, pw: string) => {
-    if (!id || !pw) return false;
-    const confirmingPassword = window.prompt("비밀번호를 한번 더 입력해주세요.");
+  const signUp = function* (args: { id: string; pw: string } | string): Generator<boolean | undefined | Promise<void>> {
+    const id = (typeof args === "object" && args?.id) || null;
+    const pw = (typeof args === "object" && args?.pw) || null;
+    console.log(!(id && pw));
+    yield id && pw ? true : false;
+    const confirmingPassword = yield;
+    console.log("confirmingPassword", confirmingPassword);
     if (pw !== confirmingPassword) {
-      window.alert("다시 입력하신 비밀번호가 맞지 않습니다.");
-      return false;
-    }
-    let isSignUpSuccessful: boolean = false;
-    await usersDataService
-      .post("create", { email: id, password: pw })
-      .then((response) => {
-        console.log(response);
-        window.alert(response.data.message);
-        isSignUpSuccessful = true;
-      })
-      .catch((error) => {
-        window.alert(error.response.data.details);
-        isSignUpSuccessful = false;
+      console.log("password mismatch");
+      return new Promise(() => {
+        throw new Error("다시 입력하신 비밀번호가 맞지 않습니다.");
       });
-    return isSignUpSuccessful;
+    }
+
+    return usersDataService.post("create", { email: id, password: pw });
   };
 
   return { userTokenState, userName, login, logout, signUp };

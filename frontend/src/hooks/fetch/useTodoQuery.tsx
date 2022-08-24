@@ -1,7 +1,6 @@
-import useTodoRequests from "../models/useTodoRequests";
+import useTodoRequests from "./useTodoRequests";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { ReceivedTodoData } from "../types/types";
-import { useEffect } from "react";
+import { ReceivedTodoData } from "../../types/types";
 
 export default function useTodoQuery() {
   const { getTodos, createTodo, updateTodo, deleteTodo } = useTodoRequests();
@@ -9,20 +8,17 @@ export default function useTodoQuery() {
   const todos = data.data;
   const queryClient = useQueryClient();
 
+  const handleMutationSuccess = () => {
+    queryClient.invalidateQueries("todos");
+  };
   const createTodoMutation = useMutation(createTodo, {
-    onSuccess: () => {
-      queryClient.invalidateQueries("todos");
-    },
+    onSuccess: handleMutationSuccess,
   });
   const updateTodoMutation = useMutation(updateTodo, {
-    onSuccess: () => {
-      queryClient.invalidateQueries("todos");
-    },
+    onSuccess: handleMutationSuccess,
   });
   const deleteTodoMutation = useMutation(deleteTodo, {
-    onSuccess: () => {
-      queryClient.invalidateQueries("todos");
-    },
+    onSuccess: handleMutationSuccess,
   });
 
   return { todos, createTodoMutation, updateTodoMutation, deleteTodoMutation };

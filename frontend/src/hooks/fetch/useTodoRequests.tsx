@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { todosDBService } from "../services/todosDBService";
-import { ReceivedTodoData, SentTodoData } from "../types/types";
+import { todosDBService } from "../../services/todosDBService";
+import { ReceivedTodoData, SentTodoData } from "../../types/types";
 
 export default function useTodoRequests() {
   const navigate = useNavigate();

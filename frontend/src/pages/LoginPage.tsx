@@ -1,5 +1,7 @@
+import { AxiosResponse } from "axios";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
+import AlertDialog from "../components/AlertDialog";
 import { AuthState } from "../contexts/AuthContext";
 import { checkIsValidFormatEmail, checkIsValidFormatPassword } from "../utils/loginUtils";
 
@@ -15,6 +17,9 @@ function LoginPage() {
     pw: false,
   });
   const { login, signUp } = useContext(AuthState);
+  const progressSignUp = useRef<ReturnType<typeof signUp>>();
+  const [alertMessage, setAlertMessage] = useState("");
+  const [pwConfirmationModalState, setPwConfirmationModalState] = useState({ isShowing: false, password: "" });
 
   useEffect(() => {
     setIsUserInputValid({ id: checkIsValidFormatEmail(user.id), pw: checkIsValidFormatPassword(user.pw) });
@@ -48,19 +53,48 @@ function LoginPage() {
 
           <ButtonsContainer>
             <Button
-              isActive={isUserInputValid.id && isUserInputValid.pw}
-              onClick={() => {
-                signUp(user.id, user.pw).then((response: boolean) => response && clearForm());
+              // disabled={!isUserInputValid.id || !isUserInputValid.pw}
+              onClick={async () => {
+                progressSignUp.current = signUp({ id: user.id, pw: user.pw });
+
+                if (!progressSignUp.current.next().value) setAlertMessage("아이디와 비밀번호를 양식에 맞게 입력해 주세요.");
+                else setPwConfirmationModalState({ isShowing: true, password: "" });
               }}
             >
               회원가입
             </Button>
-            <Button isActive={isUserInputValid.id && isUserInputValid.pw} onClick={() => login(user.id, user.pw)}>
+            <Button
+              // disabled={!isUserInputValid.id || !isUserInputValid.pw}
+              onClick={() => login(user.id, user.pw).catch((error: Error & { response: { data: { details: string } } }) => setAlertMessage(error.response.data.details))}
+            >
               로그인
             </Button>
           </ButtonsContainer>
         </Form>
       </LoginBox>
+      {alertMessage && <AlertDialog onConfirm={(hasConfirmed) => hasConfirmed && setAlertMessage("")}>{alertMessage}</AlertDialog>}
+      {pwConfirmationModalState.isShowing && (
+        <PasswordConfirmaiton
+          onConfirm={(hasConfirmed) => {
+            if (hasConfirmed) {
+              progressSignUp.current.next("hey");
+              progressSignUp.current
+                .next(pwConfirmationModalState.password)
+                .value.then((response: AxiosResponse) => {
+                  setAlertMessage(response.data.message);
+                })
+                .then(() => clearForm())
+                .catch((error: Error & { response: { data: { details: string } } }) => {
+                  setAlertMessage(error.message);
+                });
+              setPwConfirmationModalState({ ...pwConfirmationModalState, isShowing: false });
+            }
+          }}
+        >
+          <div>비밀번호 재입력:</div>
+          <input onChange={(event) => setPwConfirmationModalState({ ...pwConfirmationModalState, password: event.target.value })} />
+        </PasswordConfirmaiton>
+      )}
     </Container>
   );
 }
@@ -123,7 +157,7 @@ const ButtonsContainer = styled.div`
   display: flex;
   justify-content: space-around;
 `;
-const Button = styled.button<{ isActive: boolean }>`
-  pointer-events: ${(props) => (props.isActive ? "all" : "none")};
-  opacity: ${(props) => (props.isActive ? "1" : "0.5")};
+const Button = styled.button`
+  opacity: ${(props) => (props.disabled ? "0.5" : "1")};
 `;
+const PasswordConfirmaiton = styled(AlertDialog)``;
