@@ -53,7 +53,7 @@ function LoginPage() {
 
           <ButtonsContainer>
             <Button
-              // disabled={!isUserInputValid.id || !isUserInputValid.pw}
+              disabled={!isUserInputValid.id || !isUserInputValid.pw}
               onClick={async () => {
                 progressSignUp.current = signUp({ id: user.id, pw: user.pw });
 
@@ -64,7 +64,7 @@ function LoginPage() {
               회원가입
             </Button>
             <Button
-              // disabled={!isUserInputValid.id || !isUserInputValid.pw}
+              disabled={!isUserInputValid.id || !isUserInputValid.pw}
               onClick={() => login(user.id, user.pw).catch((error: Error & { response: { data: { details: string } } }) => setAlertMessage(error.response.data.details))}
             >
               로그인
