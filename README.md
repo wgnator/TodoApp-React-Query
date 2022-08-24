@@ -38,10 +38,10 @@ creator: Woongi Han
 - Sign Up: generator 함수를 사용하여 비밀번호 재확인 및 회원등록 api 요청 / API에서 반환되는 에러(예: 중복 사용자) 와 app 상의 에러(아이디 형식/비밀번호 재확인 오류)를 모아 한번에 처리 
 
 2. Todo Data Fetch
-useTodoQuery hook - axios 인스턴스에 React Query를 사용한 데이터 request 및 에러 핸들링
+- useTodoQuery hook - axios 인스턴스에 React Query를 사용한 데이터 request 및 에러 핸들링
 
 3. Sorting / Filtering
-불러온 할일 목록을 최신 등록/최신 수정 순으로 정렬 및 체크됨 상태에 따른 필터링, 텍스트 검색 필터링 기능
+- 불러온 할일 목록을 최신 등록/최신 수정 순으로 정렬 및 체크됨 상태에 따른 필터링, 텍스트 검색 필터링 기능
 
 
 
