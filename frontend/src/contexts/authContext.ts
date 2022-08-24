@@ -1,10 +1,4 @@
 import { createContext } from "react";
+import useLogin from "../hooks/useLogin";
 
-type AuthStateType = {
-  userTokenState: string | null;
-  userName: string | null;
-  login: (id: string, pw: string) => void;
-  logout: () => void;
-  signUp: (id: string, pw: string) => Promise<boolean>;
-};
-export const AuthState = createContext<AuthStateType>({} as AuthStateType);
+export const AuthState = createContext<{} | ReturnType<typeof useLogin>>({});
