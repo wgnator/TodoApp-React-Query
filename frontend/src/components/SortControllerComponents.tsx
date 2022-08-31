@@ -4,19 +4,29 @@ import SelectBox from "./SelectBox";
 import { BiSearch } from "react-icons/bi";
 import Debouncer from "../utils/Debouncer";
 import { DEBOUNCER_DELAY_TIME } from "../consts/consts";
-import { SelectedOptionsType } from "../types/types";
+import { OrderByType, SelectedOptionsType, sortOptionsDictionary } from "../hooks/useSortTodo";
+import { SORT_OPTIONS } from "../hooks/useSortTodo";
 
 type SortControllersPropsType = {
   selectedOptions: SelectedOptionsType;
   setSelectedOptions: Dispatch<SetStateAction<SelectedOptionsType>>;
 };
 
-export default function SortControllerComponents({ selectedOptions, setSelectedOptions }: SortControllersPropsType) {
+export default function SortControllerComponents({
+  selectedOptions,
+  setSelectedOptions,
+}: SortControllersPropsType) {
+  const { criterion, order } = selectedOptions.orderBy;
+  const { filterByIsChecked: isChecked } = selectedOptions;
+
   const handleInputOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedOptions({ ...selectedOptions, filterByStringIncluding: event.target.value });
   };
 
-  const handleOnClickOrderOption = (criterion: "updatedAt" | "createdAt", order: "newestFirst" | "oldestFirst") => {
+  const handleOnClickOrderOption = (
+    criterion: OrderByType["criterion"],
+    order: OrderByType["order"]
+  ) => {
     setSelectedOptions({ ...selectedOptions, orderBy: { criterion: criterion, order: order } });
   };
 
@@ -24,38 +34,53 @@ export default function SortControllerComponents({ selectedOptions, setSelectedO
     setSelectedOptions({ ...selectedOptions, filterByIsChecked: selectedCheckedValue });
   };
 
-  const handleInputChangeWithDebouncer = new Debouncer(handleInputOnChange, DEBOUNCER_DELAY_TIME).build();
+  const handleInputChangeWithDebouncer = new Debouncer(
+    handleInputOnChange,
+    DEBOUNCER_DELAY_TIME
+  ).build();
 
   return (
     <Container>
       <OrderSelection>
         <Option
           name="updatedAt/newestFirst"
-          selected={selectedOptions.orderBy.criterion === "updatedAt" && selectedOptions.orderBy.order === "newestFirst"}
-          onClick={() => handleOnClickOrderOption("updatedAt", "newestFirst")}
+          selected={criterion === SORT_OPTIONS.UPDATED_AT && order === SORT_OPTIONS.NEWEST_FIRST}
+          onClick={() =>
+            handleOnClickOrderOption(SORT_OPTIONS.UPDATED_AT, SORT_OPTIONS.NEWEST_FIRST)
+          }
         >
-          최신 수정순
+          {sortOptionsDictionary[SORT_OPTIONS.NEWEST_FIRST]}{" "}
+          {sortOptionsDictionary[SORT_OPTIONS.UPDATED_AT]}순
         </Option>
         <Option
           name="createdAt/newestFirst"
-          selected={selectedOptions.orderBy.criterion === "createdAt" && selectedOptions.orderBy.order === "newestFirst"}
-          onClick={() => handleOnClickOrderOption("createdAt", "newestFirst")}
+          selected={criterion === SORT_OPTIONS.CREATED_AT && order === SORT_OPTIONS.NEWEST_FIRST}
+          onClick={() =>
+            handleOnClickOrderOption(SORT_OPTIONS.CREATED_AT, SORT_OPTIONS.NEWEST_FIRST)
+          }
         >
-          최신 등록순
+          {sortOptionsDictionary[SORT_OPTIONS.NEWEST_FIRST]}{" "}
+          {sortOptionsDictionary[SORT_OPTIONS.CREATED_AT]}순
         </Option>
         <Option
           name="updatedAt/oldestFirst"
-          selected={selectedOptions.orderBy.criterion === "updatedAt" && selectedOptions.orderBy.order === "oldestFirst"}
-          onClick={() => handleOnClickOrderOption("updatedAt", "oldestFirst")}
+          selected={criterion === SORT_OPTIONS.UPDATED_AT && order === SORT_OPTIONS.OLDEST_FIRST}
+          onClick={() =>
+            handleOnClickOrderOption(SORT_OPTIONS.UPDATED_AT, SORT_OPTIONS.OLDEST_FIRST)
+          }
         >
-          오래된 수정 순
+          {sortOptionsDictionary[SORT_OPTIONS.OLDEST_FIRST]}{" "}
+          {sortOptionsDictionary[SORT_OPTIONS.UPDATED_AT]}순
         </Option>
         <Option
           name="createdAt/oldestFirst"
-          selected={selectedOptions.orderBy.criterion === "createdAt" && selectedOptions.orderBy.order === "oldestFirst"}
-          onClick={() => handleOnClickOrderOption("createdAt", "oldestFirst")}
+          selected={criterion === SORT_OPTIONS.CREATED_AT && order === SORT_OPTIONS.OLDEST_FIRST}
+          onClick={() =>
+            handleOnClickOrderOption(SORT_OPTIONS.CREATED_AT, SORT_OPTIONS.OLDEST_FIRST)
+          }
         >
-          오래된 등록 순
+          {sortOptionsDictionary[SORT_OPTIONS.OLDEST_FIRST]}{" "}
+          {sortOptionsDictionary[SORT_OPTIONS.CREATED_AT]}순
         </Option>
       </OrderSelection>
       <FilterInput>
@@ -65,13 +90,25 @@ export default function SortControllerComponents({ selectedOptions, setSelectedO
         <input onChange={handleInputChangeWithDebouncer} type="text" id="searchString" />
       </FilterInput>
       <CheckedFilterSelection>
-        <Option name="null" selected={selectedOptions.filterByIsChecked === null} onClick={() => handleOnClickFilterCheckedOption(null)}>
+        <Option
+          name="null"
+          selected={isChecked === null}
+          onClick={() => handleOnClickFilterCheckedOption(null)}
+        >
           전체
         </Option>
-        <Option name="checked" selected={selectedOptions.filterByIsChecked === true} onClick={() => handleOnClickFilterCheckedOption(true)}>
+        <Option
+          name="checked"
+          selected={isChecked === true}
+          onClick={() => handleOnClickFilterCheckedOption(true)}
+        >
           완료된 항목
         </Option>
-        <Option name="unchecked" selected={selectedOptions.filterByIsChecked === false} onClick={() => handleOnClickFilterCheckedOption(false)}>
+        <Option
+          name="unchecked"
+          selected={isChecked === false}
+          onClick={() => handleOnClickFilterCheckedOption(false)}
+        >
           미완료된 항목
         </Option>
       </CheckedFilterSelection>

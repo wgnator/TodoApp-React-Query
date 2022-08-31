@@ -111,6 +111,12 @@ textarea {
   font-family: inherit;
 }
 
+@media (max-width: 720px) {
+    button {
+      padding: 0.5rem;
+    }
+}
+
 @-webkit-keyframes skeleton-gradient {
     0% {
         background-color: rgba(165, 165, 165, 0.1);

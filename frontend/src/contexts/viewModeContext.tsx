@@ -1,12 +1,12 @@
 import { createContext, ReactNode, useContext, useState } from "react";
 
 const VIEW_MODE_BUTTON_TEXT = {
-  NORMAL: "작게 보기",
+  LARGE: "작게 보기",
   MINI: "크게 보기",
 };
 
 export const VIEW_MODE = {
-  NORMAL: VIEW_MODE_BUTTON_TEXT.NORMAL,
+  LARGE: VIEW_MODE_BUTTON_TEXT.LARGE,
   MINI: VIEW_MODE_BUTTON_TEXT.MINI,
 };
 
@@ -18,10 +18,10 @@ type ViewContextValues = {
 export const ViewModeContext = createContext({} as ViewContextValues);
 
 export const ViewModeContextProvider = ({ children }: { children: any }) => {
-  const [viewMode, setViewMode] = useState<ViewModeOptions>(VIEW_MODE.NORMAL);
+  const [viewMode, setViewMode] = useState<ViewModeOptions>(VIEW_MODE.MINI);
 
   const toggleViewMode = () =>
-    viewMode === VIEW_MODE.NORMAL ? setViewMode(VIEW_MODE.MINI) : setViewMode(VIEW_MODE.NORMAL);
+    viewMode === VIEW_MODE.LARGE ? setViewMode(VIEW_MODE.MINI) : setViewMode(VIEW_MODE.LARGE);
 
   return (
     <ViewModeContext.Provider value={{ viewMode, toggleViewMode }}>

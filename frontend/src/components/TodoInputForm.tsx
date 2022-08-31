@@ -5,14 +5,15 @@ import { SentTodoData } from "../types/types";
 
 type TodoInputFormPropsType = {
   prevData: SentTodoData | null;
+  isNew: boolean;
   closeForm: () => void;
 };
 
-export default function TodoInputForm({ prevData, closeForm }: TodoInputFormPropsType) {
+export default function TodoInputForm({ prevData, isNew, closeForm }: TodoInputFormPropsType) {
   const [inputValues, setInputValues] = useState<SentTodoData>(
     prevData ? prevData : { title: "", content: "" }
   );
-  const { createTodoMutation } = useTodoContext();
+  const { createTodoMutation, updateTodoMutation } = useTodoContext();
   const handleInputValues = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setInputValues({ ...inputValues, [event.target.name]: event.target.value });
   };
@@ -39,7 +40,8 @@ export default function TodoInputForm({ prevData, closeForm }: TodoInputFormProp
         <CancelButton onClick={() => closeForm()}>취소</CancelButton>
         <SubmitButton
           onClick={() => {
-            createTodoMutation.mutate(inputValues);
+            if (isNew) createTodoMutation.mutate(inputValues);
+            else updateTodoMutation.mutate(inputValues);
             closeForm();
           }}
         >

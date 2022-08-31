@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import styled from "styled-components";
 import { AuthState } from "../contexts/AuthContext";
-import { ViewModeContext, VIEW_MODE } from "../contexts/viewModeContext";
+import { ViewModeContext, VIEW_MODE } from "../contexts/ViewModeContext";
 
 export default function NavBar() {
   const { userName, logout } = useContext(AuthState);
@@ -12,7 +12,7 @@ export default function NavBar() {
       <ViewMode onClick={() => toggleViewMode()}>{viewMode}</ViewMode>
       <UserInfo>
         <span>{userName}</span>
-        <span>님</span> <span>, 안녕하세요!</span>
+        <span>님, 안녕하세요!</span>
         <LogoutButton onClick={() => logout()}>로그아웃</LogoutButton>
       </UserInfo>
     </Container>
@@ -44,16 +44,21 @@ const UserInfo = styled.div`
   @media (max-width: 720px) {
     width: fit-content;
 
-    > span:last-child {
+    > span {
       display: none;
     }
-    > span:first-child {
+    /* > span:first-child {
       width: 3rem;
+      height: 3rem;
       display: inline-block;
       white-space: nowrap;
       text-overflow: ellipsis;
-      /* overflow: hidden; */
-    }
+      border: 1px solid white;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    } */
   }
 `;
 

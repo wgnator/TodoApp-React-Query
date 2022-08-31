@@ -13,9 +13,6 @@ export function TodoContextProvider({ children }: { children: ReactNode }) {
     isError,
     error,
   } = useTodoQuery();
-  useEffect(() => {
-    console.log(todos);
-  }, [todos]);
 
   return (
     <TodoContext.Provider
