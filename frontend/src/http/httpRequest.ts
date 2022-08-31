@@ -12,7 +12,6 @@ export default class httpRequest {
   }
 
   post<T>(url: string, data: T) {
-    console.log("requested: POST ", data);
     return this.service.post(url, data);
   }
 

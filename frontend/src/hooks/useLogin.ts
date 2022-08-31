@@ -7,7 +7,8 @@ export default function useLogin() {
   const [userName, setUserName] = useState(localStorage.getItem("userName"));
 
   const login = (id: string, pw: string): Promise<void | AxiosResponse | Error> => {
-    if (!id || !pw) return new Promise(() => new Error("일치하는 아이디 또는 비밀번호가 없습니다."));
+    if (!id || !pw)
+      return new Promise(() => new Error("일치하는 아이디 또는 비밀번호가 없습니다."));
     else
       return usersDataService.post("login", { email: id, password: pw }).then((response) => {
         localStorage.setItem("userToken", response.data.token);
@@ -24,15 +25,16 @@ export default function useLogin() {
     setUserName(localStorage.getItem("userName"));
   };
 
-  const signUp = function* (args: { id: string; pw: string } | string): Generator<boolean | undefined | Promise<void>> {
+  const signUp = function* (
+    args: { id: string; pw: string } | string
+  ): Generator<boolean | undefined | Promise<void>> {
     const id = (typeof args === "object" && args?.id) || null;
     const pw = (typeof args === "object" && args?.pw) || null;
-    console.log(!(id && pw));
+
     yield id && pw ? true : false;
     const confirmingPassword = yield;
-    console.log("confirmingPassword", confirmingPassword);
+
     if (pw !== confirmingPassword) {
-      console.log("password mismatch");
       return new Promise(() => {
         throw new Error("다시 입력하신 비밀번호가 맞지 않습니다.");
       });

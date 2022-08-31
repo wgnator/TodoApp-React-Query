@@ -5,10 +5,9 @@ type TodoPageState = {
   showingContentTodoID: string | null;
   composingTodoID: string | null;
 };
-
 type TodoPageStateReducerAction = {
   type: keyof typeof ACTIONS;
-  payload: null | string;
+  todoIDPayload?: null | string;
 };
 
 const initialState: TodoPageState = {
@@ -29,9 +28,15 @@ const todoPageStateReducer: React.Reducer<TodoPageState, TodoPageStateReducerAct
 ) => {
   switch (action.type) {
     case ACTIONS.SET_SHOWING_CONTENT_TODO_ID:
-      return { ...state, showingContentTodoID: action.payload };
+      if (action.todoIDPayload !== undefined)
+        return { ...state, showingContentTodoID: action.todoIDPayload };
     case ACTIONS.SET_COMPOSING_TODO_ID:
-      return { ...state, composingTodoID: action.payload };
+      if (action.todoIDPayload !== undefined)
+        return { ...state, composingTodoID: action.todoIDPayload };
+    default:
+      throw new Error(
+        `todoPageStateReducer action type/payload error. Received action: ${JSON.stringify(action)}`
+      );
   }
 };
 
@@ -50,8 +55,8 @@ export default function useTodoPageStateReducer() {
 
   useEffect(() => {
     if (showingTodoIDParam)
-      dispatch({ type: ACTIONS.SET_SHOWING_CONTENT_TODO_ID, payload: showingTodoIDParam });
-    else dispatch({ type: ACTIONS.SET_SHOWING_CONTENT_TODO_ID, payload: null });
+      dispatch({ type: ACTIONS.SET_SHOWING_CONTENT_TODO_ID, todoIDPayload: showingTodoIDParam });
+    else dispatch({ type: ACTIONS.SET_SHOWING_CONTENT_TODO_ID, todoIDPayload: null });
   }, [showingTodoIDParam]);
 
   return { pageState, dispatch, showingTodoIDParam };

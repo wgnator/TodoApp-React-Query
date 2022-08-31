@@ -10,16 +10,24 @@ import { ACTIONS, TodoDispatch } from "../hooks/useTodoPageStateReducer";
 import { ReceivedTodoData } from "../types/types";
 import { useState } from "react";
 import AlertDialog from "./AlertDialog";
-import { useViewModeContext, ViewModeOptions, VIEW_MODE } from "../contexts/viewModeContext";
+import { useViewModeContext, ViewModeOptions, VIEW_MODE } from "../contexts/ViewModeContext";
+import { OrderByType, sortOptionsDictionary } from "../hooks/useSortTodo";
 
 type TodoProps = {
   todo: ReceivedTodoData;
+  showingDateType: OrderByType;
   isComposing: boolean;
   isShowingContent: boolean;
   dispatch: TodoDispatch;
 };
 
-export default function Todo({ todo, isComposing, isShowingContent, dispatch }: TodoProps) {
+export default function Todo({
+  todo,
+  showingDateType,
+  isComposing,
+  isShowingContent,
+  dispatch,
+}: TodoProps) {
   const navigate = useNavigate();
   const { showingTodoIDParam } = useParams();
   const { updateTodoMutation, deleteTodoMutation } = useTodoContext();
@@ -35,9 +43,10 @@ export default function Todo({ todo, isComposing, isShowingContent, dispatch }: 
       {isComposing ? (
         <TodoInputForm
           prevData={todo}
-          closeForm={() => dispatch({ type: ACTIONS.SET_COMPOSING_TODO_ID, payload: null })}
+          isNew={false}
+          closeForm={() => dispatch({ type: ACTIONS.SET_COMPOSING_TODO_ID, todoIDPayload: null })}
         />
-      ) : viewMode === VIEW_MODE.NORMAL ? (
+      ) : viewMode === VIEW_MODE.LARGE ? (
         <>
           <UpperRow>
             <Title>{todo.title}</Title>
@@ -49,14 +58,20 @@ export default function Todo({ todo, isComposing, isShowingContent, dispatch }: 
                 }}
               />
               <BiPencil
-                onClick={() => dispatch({ type: ACTIONS.SET_COMPOSING_TODO_ID, payload: todo.id })}
+                onClick={() =>
+                  dispatch({ type: ACTIONS.SET_COMPOSING_TODO_ID, todoIDPayload: todo.id })
+                }
               />
               <FiTrash2 onClick={() => setIsShowingAlert(true)} />
             </Icons>
           </UpperRow>
 
           {isShowingContent && <Content>{todo.content}</Content>}
-          <DateInfo>최근 수정: {new Date(todo.updatedAt).toLocaleString()}</DateInfo>
+          <DateInfo>
+            {`${sortOptionsDictionary[showingDateType.criterion]}: ${new Date(
+              todo[showingDateType.criterion]
+            ).toLocaleString()}`}
+          </DateInfo>
           {todo.checked && <Checkmark />}
         </>
       ) : (
@@ -71,9 +86,16 @@ export default function Todo({ todo, isComposing, isShowingContent, dispatch }: 
               {todo.checked && <CheckmarkMini />}
             </Checkbox>
             <Title>{todo.title}</Title>
+            <DateInfo>
+              {`${sortOptionsDictionary[showingDateType.criterion]}: ${new Date(
+                todo[showingDateType.criterion]
+              ).toLocaleDateString()}`}
+            </DateInfo>
             <Icons>
               <BiPencil
-                onClick={() => dispatch({ type: ACTIONS.SET_COMPOSING_TODO_ID, payload: todo.id })}
+                onClick={() =>
+                  dispatch({ type: ACTIONS.SET_COMPOSING_TODO_ID, todoIDPayload: todo.id })
+                }
               />
               <FiTrash2 onClick={() => setIsShowingAlert(true)} />
             </Icons>
@@ -82,7 +104,6 @@ export default function Todo({ todo, isComposing, isShowingContent, dispatch }: 
             {isShowingContent && (
               <>
                 <Content>{todo.content}</Content>
-                <DateInfo>최근 수정: {new Date(todo.updatedAt).toLocaleString()}</DateInfo>
               </>
             )}
           </LowerRow>
@@ -102,7 +123,7 @@ export default function Todo({ todo, isComposing, isShowingContent, dispatch }: 
     </Container>
   );
 }
-export const Container = styled.div<{ layout: ViewModeOptions }>`
+export const Container = styled.div<{ layout?: ViewModeOptions }>`
   position: relative;
   width: 100%;
   min-height: 5rem;
@@ -111,10 +132,11 @@ export const Container = styled.div<{ layout: ViewModeOptions }>`
   border-radius: 10px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
+
   gap: 0.3rem;
   transition: height 1s;
-  ${(props) => props.layout === VIEW_MODE.MINI && `min-height: 0;`}
+  ${(props) => props.layout === VIEW_MODE.MINI && `min-height: 0; gap:0;`}
 `;
 const Icons = styled.div`
   top: 0.5rem;
@@ -130,7 +152,8 @@ const Title = styled.h2`
   width: 100%;
 `;
 const DateInfo = styled.div`
-  align-self: flex-end;
+  flex-shrink: 0;
+  text-align: right;
 `;
 const Content = styled.div`
   margin: 1rem 0;
@@ -163,6 +186,7 @@ const Checkbox = styled.div`
   height: 1rem;
   background-color: white;
   margin-right: 1rem;
+  flex-shrink: 0;
 `;
 const CheckmarkMini = styled(ImCheckmark)`
   color: green;
