@@ -4,15 +4,19 @@ import { theme } from "../styles/theme";
 import Button from "./Button";
 
 type AlertDialogPropType = {
+  isCancelable?: boolean;
   children: React.ReactNode;
   onConfirm: (hasConfirmed: boolean) => void;
 };
-export default function AlertDialog({ children, onConfirm }: AlertDialogPropType) {
+export default function AlertDialog({ isCancelable, children, onConfirm }: AlertDialogPropType) {
   return (
     <Veil>
       <Container>
         <Message>{children}</Message>
-        <ConfirmButton onClick={() => onConfirm(true)}>확인</ConfirmButton>
+        <ButtonsWrapper>
+          <ConfirmButton onClick={() => onConfirm(true)}>확인</ConfirmButton>
+          {isCancelable && <ConfirmButton onClick={() => onConfirm(false)}>취소</ConfirmButton>}
+        </ButtonsWrapper>
       </Container>
     </Veil>
   );
@@ -21,7 +25,10 @@ export default function AlertDialog({ children, onConfirm }: AlertDialogPropType
 const Veil = styled.div`
   width: 100%;
   height: 100%;
-  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  position: fixed;
   background-color: rgba(0, 0, 0, 0.4);
 `;
 const Container = styled.div`
@@ -40,4 +47,10 @@ const Container = styled.div`
   top: calc((100vh - 10rem) / 2);
 `;
 const Message = styled.h4``;
+
+const ButtonsWrapper = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+`;
 const ConfirmButton = styled(Button)``;
