@@ -3,6 +3,7 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import AlertDialog from "../components/AlertDialog";
 import { AuthState } from "../contexts/AuthContext";
+import useLogin from "../hooks/useLogin";
 import { checkIsValidFormatEmail, checkIsValidFormatPassword } from "../utils/loginUtils";
 
 const INVALID_MESSAGE = {
@@ -16,7 +17,7 @@ function LoginPage() {
     id: false,
     pw: false,
   });
-  const { login, signUp } = useContext(AuthState);
+  const { login, signUp } = useContext<ReturnType<typeof useLogin>>(AuthState);
   const progressSignUp = useRef<ReturnType<typeof signUp>>();
   const [alertMessage, setAlertMessage] = useState("");
   const [pwConfirmationModalState, setPwConfirmationModalState] = useState({ isShowing: false, password: "" });
@@ -77,9 +78,9 @@ function LoginPage() {
         <PasswordConfirmaiton
           onConfirm={(hasConfirmed) => {
             if (hasConfirmed) {
-              progressSignUp.current.next("hey");
-              progressSignUp.current
-                .next(pwConfirmationModalState.password)
+              progressSignUp?.current?.next("hey");
+              progressSignUp?.current
+                ?.next(pwConfirmationModalState.password)
                 .value.then((response: AxiosResponse) => {
                   setAlertMessage(response.data.message);
                 })

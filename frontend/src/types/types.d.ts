@@ -10,10 +10,13 @@ export interface SentTodoData {
   title?: string;
   content?: string;
   checked?: boolean;
-  id: string;
+  id?: string;
 }
 
-export type OrderByType = { criterion: "updatedAt" | "createdAt"; order: "newestFirst" | "oldestFirst" };
+export type OrderByType = {
+  criterion: "updatedAt" | "createdAt";
+  order: "newestFirst" | "oldestFirst";
+};
 export type SelectedOptionsType = {
   orderBy: OrderByType;
   filterByStringIncluding: string;
