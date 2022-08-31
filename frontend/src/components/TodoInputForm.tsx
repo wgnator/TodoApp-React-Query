@@ -35,21 +35,24 @@ export default function TodoInputForm({ prevData, closeForm }: TodoInputFormProp
         placeholder="내용 입력"
         onChange={handleInputValues}
       />
-      <SubmitButton
-        onClick={() => {
-          createTodoMutation.mutate(inputValues);
-          closeForm();
-        }}
-      >
-        저장
-      </SubmitButton>
-      <CancelButton onClick={() => closeForm()}>취소</CancelButton>
+      <ButtonsWrapper>
+        <CancelButton onClick={() => closeForm()}>취소</CancelButton>
+        <SubmitButton
+          onClick={() => {
+            createTodoMutation.mutate(inputValues);
+            closeForm();
+          }}
+        >
+          저장
+        </SubmitButton>
+      </ButtonsWrapper>
     </Form>
   );
 }
 
 const Form = styled.form`
   display: flex;
+  width: 100%;
   flex-direction: column;
   padding: 0.5rem 1rem;
   gap: 0.5rem;
@@ -67,7 +70,14 @@ const TextArea = styled.textarea`
   resize: none;
   padding: 0.5rem;
 `;
-
+const ButtonsWrapper = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  > * {
+    width: 49%;
+  }
+`;
 const SubmitButton = styled.button`
   padding: 0.5rem;
   display: flex;
