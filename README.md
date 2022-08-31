@@ -3,11 +3,15 @@ creator: Woongi Han
 
 # Preview
 
-### Login Page
+## Login Page
 <img width="548" alt="Screen Shot 2022-08-13 at 2 11 53 AM" src="https://user-images.githubusercontent.com/69628701/184409438-9c4edb03-fd54-474b-9514-b7647639b9e9.png">
 
-### Main Page
-<img width="968" alt="Screen Shot 2022-08-13 at 2 07 34 AM" src="https://user-images.githubusercontent.com/69628701/184408869-cd321659-df79-41a3-9ca7-8fc170919f96.png">
+## Main Page
+### 크게보기:
+<img width="847" alt="Screen Shot 2022-08-31 at 6 16 14 PM" src="https://user-images.githubusercontent.com/69628701/187644116-af502b15-e61f-4c1a-8689-424d6e6e8788.png">
+
+### 작게보기:
+<img width="848" alt="Screen Shot 2022-08-31 at 6 16 34 PM" src="https://user-images.githubusercontent.com/69628701/187644177-c721d26c-7e13-41ef-9f4c-88c4ed2ccfac.png">
 
 # 실행방법:
 
