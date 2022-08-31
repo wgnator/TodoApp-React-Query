@@ -47,5 +47,6 @@ creator: Woongi Han
 3. Sorting / Filtering
 - 불러온 할일 목록을 최신 등록/최신 수정 순으로 정렬 및 체크됨 상태에 따른 필터링, 텍스트 검색 필터링 기능
 
-
+4. Layout
+- 항목들을 크게보기 / 작게보기 선택 가능
 
