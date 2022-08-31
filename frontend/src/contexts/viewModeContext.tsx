@@ -2,7 +2,7 @@ import { createContext, ReactNode, useContext, useState } from "react";
 
 const VIEW_MODE_BUTTON_TEXT = {
   NORMAL: "작게 보기",
-  MINI: "큼직하게 보기",
+  MINI: "크게 보기",
 };
 
 export const VIEW_MODE = {
