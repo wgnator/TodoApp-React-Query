@@ -8,10 +8,10 @@ creator: Woongi Han
 
 ## Main Page
 ### 크게보기:
-<img width="847" alt="Screen Shot 2022-08-31 at 6 16 14 PM" src="https://user-images.githubusercontent.com/69628701/187644116-af502b15-e61f-4c1a-8689-424d6e6e8788.png">
+<img width="875" alt="Screen Shot 2022-09-01 at 12 51 19 AM" src="https://user-images.githubusercontent.com/69628701/187722898-847e78e0-192e-4162-b767-10fc17cb5dd5.png">
 
 ### 작게보기:
-<img width="848" alt="Screen Shot 2022-08-31 at 6 16 34 PM" src="https://user-images.githubusercontent.com/69628701/187644177-c721d26c-7e13-41ef-9f4c-88c4ed2ccfac.png">
+<img width="872" alt="Screen Shot 2022-09-01 at 12 50 43 AM" src="https://user-images.githubusercontent.com/69628701/187722757-76344925-81c1-4036-8e26-ccc59d973d12.png">
 
 # 실행방법:
 
