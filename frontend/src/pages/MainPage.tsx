@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { theme } from "../styles/theme";
 import sortTodoFunctions from "../utils/sortTodoFunctions";
@@ -12,16 +12,23 @@ import Todo from "../components/Todo";
 import { useTodoContext } from "../contexts/TodoContext";
 import useTodoPageStateReducer, { ACTIONS } from "../hooks/useTodoPageStateReducer";
 import { Container as TodoStyle } from "../components/Todo";
+import AlertDialog from "../components/AlertDialog";
+import TodoSkeleton from "../components/TodoSkeleton";
 
 export default function MainPage() {
-  const { todos } = useTodoContext();
+  const { todos, isError, error, isLoading } = useTodoContext();
   const { sortTodos } = sortTodoFunctions();
   const { pageState, dispatch } = useTodoPageStateReducer();
+  const [isShowingAlert, setIsShowingAlert] = useState(false);
   const [selectedOptions, setSelectedOptions] = useState<SelectedOptionsType>(
     initialSelectedOptionsState
   );
 
   const closeForm = () => dispatch({ type: ACTIONS.SET_COMPOSING_TODO_ID, payload: null });
+
+  useEffect(() => {
+    if (isError) setIsShowingAlert(true);
+  }, [isError]);
 
   return (
     <Container>
@@ -42,21 +49,23 @@ export default function MainPage() {
           <PlusCircle />
         )}
       </CreateTodo>
-      {todos &&
-        sortTodos(todos, selectedOptions).map((todo) => (
-          <Todo
-            key={todo.id}
-            todo={todo}
-            isComposing={pageState.composingTodoID === todo.id}
-            isShowingContent={pageState.showingContentTodoID === todo.id}
-            dispatch={dispatch}
-          />
-        ))}
-      {/* {isLoading && (
-        <Veil>
-          <Circle />
-        </Veil>
-      )} */}
+      {!isLoading && todos
+        ? sortTodos(todos, selectedOptions).map((todo) => (
+            <Todo
+              key={todo.id}
+              todo={todo}
+              isComposing={pageState.composingTodoID === todo.id}
+              isShowingContent={pageState.showingContentTodoID === todo.id}
+              dispatch={dispatch}
+            />
+          ))
+        : isLoading && !error && <TodoSkeleton numOfItems={3} />}
+
+      {isShowingAlert && (
+        <AlertDialog isCancelable={false} onConfirm={() => setIsShowingAlert(false)}>
+          데이터를 불러오는데 실패하였습니다: {error?.message}
+        </AlertDialog>
+      )}
     </Container>
   );
 }

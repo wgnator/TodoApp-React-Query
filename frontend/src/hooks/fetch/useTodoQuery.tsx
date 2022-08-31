@@ -4,8 +4,14 @@ import { ReceivedTodoData } from "../../types/types";
 
 export default function useTodoQuery() {
   const { getTodos, createTodo, updateTodo, deleteTodo } = useTodoRequests();
-  const data = useQuery<ReceivedTodoData[]>("todos", getTodos);
-  const todos = data.data;
+  const { isLoading, isError, error, data } = useQuery<ReceivedTodoData[], Error>(
+    ["todos"],
+    getTodos,
+    {
+      retry: 0,
+    }
+  );
+  const todos = data;
   const queryClient = useQueryClient();
 
   const handleMutationSuccess = () => {
@@ -21,5 +27,30 @@ export default function useTodoQuery() {
     onSuccess: handleMutationSuccess,
   });
 
-  return { todos, createTodoMutation, updateTodoMutation, deleteTodoMutation };
+  return {
+    isLoading,
+    isError,
+    error,
+    todos,
+    createTodoMutation,
+    updateTodoMutation,
+    deleteTodoMutation,
+  };
 }
+
+// const App: React.FC = () => {
+//   const { reset } = useQueryErrorResetBoundary()
+//   return (
+//     <ErrorBoundary
+//       onReset={reset}
+//       fallbackRender={({ resetErrorBoundary }) => (
+//         <div>
+//           There was an error!
+//           <Button onClick={() => resetErrorBoundary()}>Try again</Button>
+//         </div>
+//       )}
+//     >
+//       <Page />
+//     </ErrorBoundary>
+//   )
+// }

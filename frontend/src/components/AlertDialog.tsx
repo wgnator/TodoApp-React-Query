@@ -5,7 +5,7 @@ import Button from "./Button";
 
 type AlertDialogPropType = {
   isCancelable?: boolean;
-  children: React.ReactNode;
+  children: any;
   onConfirm: (hasConfirmed: boolean) => void;
 };
 export default function AlertDialog({ isCancelable, children, onConfirm }: AlertDialogPropType) {
