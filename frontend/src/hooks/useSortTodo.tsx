@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { ReceivedTodoData } from "../types/types";
-import { isToday, isThisWeek, isThisMonth } from "date-fns";
+import { isToday, isThisWeek, isThisMonth, isSameDay, isWithinInterval } from "date-fns";
 import { TermDictionary } from "../consts/consts";
+import { SelectedDatesType } from "../components/DatePicker";
+import { todosDBService } from "../services/todosDBService";
 
 export const SORT_OPTIONS = {
   UPDATED_AT: "updatedAt",
@@ -25,6 +27,7 @@ export type SelectedOptionsType = {
   orderBy: OrderByType;
   filterByStringIncluding: string;
   filterByIsChecked: boolean | null;
+  filterByDate: SelectedDatesType;
 };
 
 export type OrderTodosByType = (
@@ -40,7 +43,6 @@ export type FilterTodosByCheckedType = (
 
 export type FilterTodosByStringType = (
   todos: ReceivedTodoData[],
-  criterion: "title" | "content" | null,
   searchString: string
 ) => ReceivedTodoData[];
 
@@ -48,6 +50,7 @@ export const initialSelectedOptionsState: SelectedOptionsType = {
   orderBy: { criterion: SORT_OPTIONS.CREATED_AT, order: SORT_OPTIONS.NEWEST_FIRST },
   filterByStringIncluding: "",
   filterByIsChecked: null,
+  filterByDate: { startDate: null, endDate: null },
 };
 
 export default function useSortTodo() {
@@ -69,23 +72,45 @@ export default function useSortTodo() {
   const filterTodosByChecked: FilterTodosByCheckedType = (todos, isValue) =>
     isValue === null ? todos : todos?.filter((todo: ReceivedTodoData) => todo.checked === isValue);
 
-  const filterTodosByString: FilterTodosByStringType = (todos, criterion, searchString) =>
+  const filterTodosByString: FilterTodosByStringType = (todos, searchString) =>
     todos &&
-    (criterion === null
+    todos.filter(
+      (todo: ReceivedTodoData) =>
+        todo.title.includes(searchString) || todo.content.includes(searchString)
+    );
+
+  const filterTodosByDate = (
+    todos: ReceivedTodoData[],
+    criterion: OrderByType["criterion"],
+    options: SelectedDatesType
+  ) =>
+    options.startDate && options.endDate && todos
       ? todos.filter(
-          (todo: ReceivedTodoData) =>
-            todo.title.includes(searchString) || todo.content.includes(searchString)
+          (todo) =>
+            options.startDate &&
+            options.endDate &&
+            isWithinInterval(new Date(todo[criterion]), {
+              start: options.startDate,
+              end: options.endDate,
+            })
         )
-      : todos.filter((todo: ReceivedTodoData) => todo[criterion].includes(searchString)));
+      : options.startDate && todos
+      ? todos.filter(
+          (todo) => options.startDate && isSameDay(new Date(todo[criterion]), options.startDate)
+        )
+      : todos;
 
   const sortTodos = (todos: ReceivedTodoData[], options: SelectedOptionsType) =>
-    filterTodosByString(
-      filterTodosByChecked(
-        orderTodosBy(todos, options.orderBy.criterion, options.orderBy.order),
-        options.filterByIsChecked
+    filterTodosByDate(
+      filterTodosByString(
+        filterTodosByChecked(
+          orderTodosBy(todos, options.orderBy.criterion, options.orderBy.order),
+          options.filterByIsChecked
+        ),
+        options.filterByStringIncluding
       ),
-      null,
-      options.filterByStringIncluding
+      options.orderBy.criterion,
+      options.filterByDate
     );
 
   const reduceTodos = (

@@ -110,7 +110,18 @@ button {
 textarea {
   font-family: inherit;
 }
+::-webkit-scrollbar {
+  width: 12px;               /* width of the entire scrollbar */
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
 
+::-webkit-scrollbar-thumb {
+  background-color: rgba(0,0,0,0.5);    /* color of the scroll thumb */
+     /* roundness of the scroll thumb */
+  border-radius: 5px;
+}
 @media (max-width: 720px) {
     button {
       padding: 0.5rem;

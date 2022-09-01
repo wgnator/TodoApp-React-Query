@@ -18,20 +18,25 @@ export default function SelectBox({ children }: { children: ReactElement[] }) {
         setIsSelecting(!isSelecting);
       }}
     >
-      {isSelecting ? <OptionsWrapper>{children}</OptionsWrapper> : <SelectedOption>{children.find((child) => child.props.selected)?.props.children}</SelectedOption>}
+      {isSelecting ? (
+        <OptionsWrapper>{children}</OptionsWrapper>
+      ) : (
+        <SelectedOption>
+          {children.find((child) => child.props.selected)?.props.children}
+        </SelectedOption>
+      )}
 
       <TriangleDown />
     </Container>
   );
 }
 
-const Container = styled.div`
+export const Container = styled.div`
   border: 3px white solid;
   height: 3rem;
   border-radius: 8px;
   width: 10rem;
   padding: 0.3rem 0.3rem;
-  position: relative;
   display: flex;
   align-items: center;
   cursor: pointer;
