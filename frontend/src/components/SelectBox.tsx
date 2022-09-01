@@ -6,7 +6,7 @@ import useDetectOutsideClick from "../hooks/useDetectOutsideClick";
 
 export default function SelectBox({ children }: { children: ReactElement[] }) {
   const [isSelecting, setIsSelecting] = useState(false);
-  const containerRef = useRef<HTMLDivElement>();
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useDetectOutsideClick([containerRef], () => setIsSelecting(false));
 
@@ -32,6 +32,7 @@ export default function SelectBox({ children }: { children: ReactElement[] }) {
 }
 
 export const Container = styled.div`
+  position: relative;
   border: 3px white solid;
   height: 3rem;
   border-radius: 8px;
