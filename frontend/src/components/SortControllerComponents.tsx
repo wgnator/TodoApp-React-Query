@@ -100,7 +100,7 @@ export default function SortControllerComponents({
       {isShowingDatePicker && (
         <DatePicker
           beginningDate={todosMetaData.beginningDate}
-          indicatedDates={todos?.map((todo) => new Date(todo.createdAt)) || null}
+          indicatedDates={todos?.map((todo) => new Date(todo[criterion])) || null}
           selectedOptions={selectedOptions}
           setSelectedOptions={setSelectedOptions}
         />
@@ -195,4 +195,6 @@ const CheckedFilterSelection = styled(SelectBox)`
     width: 30%;
   }
 `;
-const Option = styled.div<{ name: string; selected: boolean }>``;
+const Option = styled.div<{ name: string; selected: boolean }>`
+  width: 100%;
+`;
