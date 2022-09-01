@@ -13,6 +13,9 @@ creator: Woongi Han
 ### 작게보기:
 <img width="872" alt="Screen Shot 2022-09-01 at 12 50 43 AM" src="https://user-images.githubusercontent.com/69628701/187722757-76344925-81c1-4036-8e26-ccc59d973d12.png">
 
+## 날짜검색:
+<img width="941" alt="Screen Shot 2022-09-02 at 3 47 48 AM" src="https://user-images.githubusercontent.com/69628701/187990078-46a78969-a8cc-4b1d-83c9-fad9d161428b.png">
+
 # 실행방법:
 
 # 1-1) API 실행
