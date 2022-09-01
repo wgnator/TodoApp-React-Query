@@ -1,11 +1,14 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import SelectBox from "./SelectBox";
+import SelectBox, { Container as SelectBoxContainer } from "./SelectBox";
 import { BiSearch } from "react-icons/bi";
+import { GoCalendar } from "react-icons/go";
 import Debouncer from "../utils/Debouncer";
 import { DEBOUNCER_DELAY_TIME } from "../consts/consts";
 import { OrderByType, SelectedOptionsType, sortOptionsDictionary } from "../hooks/useSortTodo";
 import { SORT_OPTIONS } from "../hooks/useSortTodo";
+import DatePicker from "./DatePicker";
+import { useTodoContext } from "../contexts/TodoContext";
 
 type SortControllersPropsType = {
   selectedOptions: SelectedOptionsType;
@@ -18,6 +21,8 @@ export default function SortControllerComponents({
 }: SortControllersPropsType) {
   const { criterion, order } = selectedOptions.orderBy;
   const { filterByIsChecked: isChecked } = selectedOptions;
+  const [isShowingDatePicker, setIsShowingDatePicker] = useState(false);
+  const { todos, todosMetaData } = useTodoContext();
 
   const handleInputOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedOptions({ ...selectedOptions, filterByStringIncluding: event.target.value });
@@ -89,6 +94,18 @@ export default function SortControllerComponents({
         </label>
         <input onChange={handleInputChangeWithDebouncer} type="text" id="searchString" />
       </FilterInput>
+      <CalendarIconWrapper>
+        <CalendarIcon onClick={() => setIsShowingDatePicker(!isShowingDatePicker)} />
+      </CalendarIconWrapper>
+      {isShowingDatePicker && (
+        <DatePicker
+          beginningDate={todosMetaData.beginningDate}
+          indicatedDates={todos?.map((todo) => new Date(todo.createdAt)) || null}
+          selectedOptions={selectedOptions}
+          setSelectedOptions={setSelectedOptions}
+        />
+      )}
+
       <CheckedFilterSelection>
         <Option
           name="null"
@@ -119,7 +136,9 @@ export default function SortControllerComponents({
 const Container = styled.div`
   width: 100%;
   display: flex;
+  position: relative;
   justify-content: space-between;
+  gap: 1rem;
   option,
   input {
     border: none;
@@ -160,6 +179,15 @@ const FilterInput = styled.div`
       height: 50%;
     }
   }
+`;
+const CalendarIconWrapper = styled(SelectBoxContainer)`
+  width: 3rem;
+  justify-content: center;
+  position: relative;
+`;
+const CalendarIcon = styled(GoCalendar)`
+  width: 100%;
+  height: 2rem;
 `;
 const CheckedFilterSelection = styled(SelectBox)`
   width: 20%;
