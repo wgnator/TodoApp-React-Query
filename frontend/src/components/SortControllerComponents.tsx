@@ -101,8 +101,13 @@ export default function SortControllerComponents({
         <DatePicker
           beginningDate={todosMetaData.beginningDate}
           indicatedDates={todos?.map((todo) => new Date(todo[criterion])) || null}
-          selectedOptions={selectedOptions}
-          setSelectedOptions={setSelectedOptions}
+          preSelectedDates={selectedOptions.filterByDate}
+          callback={(selectedDates) =>
+            setSelectedOptions({
+              ...selectedOptions,
+              filterByDate: { ...selectedOptions.filterByDate, ...selectedDates },
+            })
+          }
         />
       )}
 
