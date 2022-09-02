@@ -17,12 +17,10 @@ import {
   startOfMonth,
 } from "date-fns";
 import { addMonths, compareAsc } from "date-fns/esm";
-import { Dispatch, SetStateAction, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { theme } from "../styles/theme";
 import { IoIosArrowDropdown, IoIosArrowDropup } from "react-icons/io";
-
-import { SelectedOptionsType } from "../hooks/useSortTodo";
 
 type DateItemPropsType = {
   selectedAsStart?: boolean;
@@ -41,13 +39,13 @@ export type SelectedDatesType = {
 export default function DatePicker({
   beginningDate,
   indicatedDates,
-  selectedOptions,
-  setSelectedOptions,
+  preSelectedDates,
+  callback,
 }: {
   beginningDate: Date;
   indicatedDates: Date[] | null;
-  selectedOptions: SelectedOptionsType;
-  setSelectedOptions: Dispatch<SetStateAction<SelectedOptionsType>>;
+  preSelectedDates: SelectedDatesType;
+  callback: (selectedDates: { startDate?: Date | null; endDate?: Date | null }) => void;
 }) {
   const today = useRef<Date>(new Date());
   const windowRef = useRef<HTMLDivElement>(null);
@@ -56,29 +54,18 @@ export default function DatePicker({
   const numOfMonths = differenceInCalendarMonths(today.current, beginningDate) + 1;
   const [monthHeight, setMonthHeight] = useState(0);
   const [scrollTop, setScrollTop] = useState(0);
-  const { startDate, endDate } = selectedOptions.filterByDate;
+  const { startDate, endDate } = preSelectedDates;
 
   const handleDateSelection = (selectedDate: Date) => {
     if (startDate === null || (startDate && endDate))
-      setSelectedOptions({
-        ...selectedOptions,
-        filterByDate: { startDate: startOfDay(selectedDate), endDate: null },
-      });
-    else if (compareAsc(selectedDate, startDate) > 0)
-      setSelectedOptions({
-        ...selectedOptions,
-        filterByDate: { ...selectedOptions.filterByDate, endDate: endOfDay(selectedDate) },
-      });
-    else
-      setSelectedOptions({
-        ...selectedOptions,
-        filterByDate: { ...selectedOptions.filterByDate, startDate: selectedDate },
-      });
+      callback({ startDate: startOfDay(selectedDate), endDate: null });
+    else if (compareAsc(selectedDate, startDate) > 0) callback({ endDate: endOfDay(selectedDate) });
+    else callback({ startDate: selectedDate });
   };
 
   useLayoutEffect(() => {
-    if (monthsContainerRef?.current)
-      setMonthHeight(monthsContainerRef?.current.clientHeight / numOfMonths);
+    if (monthsContainerRef.current)
+      setMonthHeight(parseFloat(getComputedStyle(monthsContainerRef.current).height) / numOfMonths);
   }, []);
 
   useEffect(() => {
@@ -91,30 +78,38 @@ export default function DatePicker({
   }, [scrollTop]);
 
   useEffect(() => {
-    const rerenderWhenScroll = () => setScrollTop(windowRef?.current?.scrollTop || 0);
-    windowRef?.current?.addEventListener("scroll", rerenderWhenScroll);
-    return () => windowRef?.current?.removeEventListener("scroll", rerenderWhenScroll);
+    const rerenderOnScroll = () => setScrollTop(windowRef?.current?.scrollTop || 0);
+    windowRef?.current?.addEventListener("scroll", rerenderOnScroll);
+    return () => windowRef?.current?.removeEventListener("scroll", rerenderOnScroll);
   }, []);
 
   return (
     <Container>
-      {scrollTop !== 0 && (
+      {scrollTop > 0 && (
         <ArrowUpWrapper>
           <Clickable
-            onClick={(event) => {
-              setScrollTop(scrollTop - (scrollTop % monthHeight || monthHeight));
-              console.log(scrollTop - monthHeight);
+            onClick={() => {
+              setScrollTop(
+                scrollTop -
+                  (Math.floor(scrollTop % monthHeight) === 0
+                    ? monthHeight
+                    : scrollTop % monthHeight)
+              );
             }}
           />
           <IoIosArrowDropup width="100%" height="100%" />
         </ArrowUpWrapper>
       )}
-      {scrollTop <= monthHeight * (numOfMonths - 1) && (
+      {scrollTop < monthHeight * (numOfMonths - 1) && (
         <ArrowDownWrapper>
           <Clickable
-            onClick={(event) => {
-              setScrollTop(scrollTop + (monthHeight - (scrollTop % monthHeight) || monthHeight));
-              console.log(scrollTop + monthHeight);
+            onClick={() => {
+              setScrollTop(
+                scrollTop +
+                  (Math.floor(monthHeight - (scrollTop % monthHeight)) === 0
+                    ? monthHeight
+                    : monthHeight - (scrollTop % monthHeight))
+              );
             }}
           />
           <IoIosArrowDropdown width="100%" height="100%" />
@@ -177,7 +172,7 @@ export default function DatePicker({
                           <DateTextWrapper>{getDate(date)}</DateTextWrapper>
                         </DateItem>
                       ) : (
-                        <DateItem></DateItem>
+                        <DateItem key={index} />
                       );
                     })}
                 </DatesContainer>
@@ -247,6 +242,7 @@ const MonthsContainer = styled.div`
 const MonthContainer = styled.div`
   padding: 1rem 2rem;
   height: 360px;
+  margin: 0;
   flex-basis: 100%;
   flex-grow: 0;
   flex-shrink: 0;
