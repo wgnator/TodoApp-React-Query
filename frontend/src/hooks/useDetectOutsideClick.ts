@@ -17,6 +17,8 @@ export default function useDetectOutsideClick(
       if (hasClickedOutsideAllElements) callback();
     };
     window.addEventListener("click", clickedOutsideElementListener);
-    return () => window.removeEventListener("click", clickedOutsideElementListener);
+    return () => {
+      window.removeEventListener("click", clickedOutsideElementListener);
+    };
   }, []);
 }

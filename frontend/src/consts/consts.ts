@@ -1,3 +1,4 @@
+export const MOBILE_WIDTH = 620;
 export const DEBOUNCER_DELAY_TIME = 300;
 
 export const TermDictionary = {

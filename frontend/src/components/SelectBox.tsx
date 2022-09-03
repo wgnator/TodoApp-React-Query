@@ -33,7 +33,7 @@ export default function SelectBox({ children }: { children: ReactElement[] }) {
 
 export const Container = styled.div`
   position: relative;
-  border: 3px white solid;
+  border: 2px white solid;
   height: 3rem;
   border-radius: 8px;
   width: 10rem;
@@ -47,6 +47,9 @@ const SelectedOption = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  @media (max-width: 620px) {
+    width: 100%;
+  }
 `;
 const OptionsWrapper = styled.div`
   z-index: 1;
@@ -54,7 +57,7 @@ const OptionsWrapper = styled.div`
   top: -3px;
   left: -3px;
   padding: 0.5rem 0;
-  border: 3px white solid;
+  border: 2px white solid;
   border-radius: 8px;
   width: 100%;
   box-sizing: content-box;
@@ -90,5 +93,8 @@ const TriangleDown = styled(GoTriangleDown)`
   font-size: 0.6rem;
   * {
     color: white;
+  }
+  @media (max-width: 620px) {
+    display: none;
   }
 `;

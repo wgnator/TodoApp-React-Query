@@ -81,6 +81,11 @@ table {
     box-sizing: border-box;
 }
 
+  
+*:focus, *:focus-visible {
+  outline: none;
+}
+
 button {
   border-radius: 8px;
   border: 1px solid white;
@@ -92,7 +97,7 @@ button {
   background-color: inherit;
   cursor: pointer;
   transition: border-color 0.25s, color 0.25s;
-  
+
 &:hover {
   border-color: #646cff;
   color: #646cff;
@@ -100,10 +105,6 @@ button {
     color: #646cff;
     transition: color 0.25s;
   }
-}
-&:focus,
-&:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
 }
 }
 

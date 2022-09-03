@@ -86,7 +86,7 @@ export default function Todo({
               {todo.checked && <CheckmarkMini />}
             </Checkbox>
             <Title>{todo.title}</Title>
-            <DateInfo>
+            <DateInfo viewMode={viewMode}>
               {`${sortOptionsDictionary[showingDateType.criterion]}: ${new Date(
                 todo[showingDateType.criterion]
               ).toLocaleDateString()}`}
@@ -150,10 +150,17 @@ const Icons = styled.div`
 const Title = styled.h2`
   align-self: flex-start;
   width: 100%;
+  height: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 `;
-const DateInfo = styled.div`
+const DateInfo = styled.div<{ viewMode?: ViewModeOptions }>`
   flex-shrink: 0;
   text-align: right;
+  @media (max-width: 620px) {
+    display: ${(props) => props.viewMode === VIEW_MODE.MINI && " none"};
+  }
 `;
 const Content = styled.div`
   margin: 1rem 0;
