@@ -16,6 +16,12 @@ creator: Woongi Han
 ## 날짜검색:
 <img width="941" alt="Screen Shot 2022-09-02 at 3 47 48 AM" src="https://user-images.githubusercontent.com/69628701/187990078-46a78969-a8cc-4b1d-83c9-fad9d161428b.png">
 
+## 반응형 - 모바일:
+<img width="284" alt="Screen Shot 2022-09-03 at 7 02 11 PM" src="https://user-images.githubusercontent.com/69628701/188266264-4462970d-0d78-4196-bca6-d2552b1025ef.png">
+<img width="286" alt="Screen Shot 2022-09-03 at 7 03 14 PM" src="https://user-images.githubusercontent.com/69628701/188266262-0bff37be-8e8d-4cc3-a6dc-dcb03e2e7a06.png">
+<img width="284" alt="Screen Shot 2022-09-03 at 7 17 27 PM" src="https://user-images.githubusercontent.com/69628701/188266259-6d6671f2-2044-4d7c-8a3d-571b8e2e8927.png">
+
+
 # 실행방법:
 
 # 1-1) API 실행
