@@ -7,11 +7,12 @@ creator: Woongi Han
 <img width="548" alt="Screen Shot 2022-08-13 at 2 11 53 AM" src="https://user-images.githubusercontent.com/69628701/184409438-9c4edb03-fd54-474b-9514-b7647639b9e9.png">
 
 ## Main Page
-### 크게보기:
-<img width="875" alt="Screen Shot 2022-09-01 at 12 51 19 AM" src="https://user-images.githubusercontent.com/69628701/187722898-847e78e0-192e-4162-b767-10fc17cb5dd5.png">
 
 ### 작게보기:
-<img width="872" alt="Screen Shot 2022-09-01 at 12 50 43 AM" src="https://user-images.githubusercontent.com/69628701/187722757-76344925-81c1-4036-8e26-ccc59d973d12.png">
+<img width="952" alt="Screen Shot 2022-09-03 at 7 21 57 PM" src="https://user-images.githubusercontent.com/69628701/188266335-ddd789af-0971-42cb-983b-621ec9ec074a.png">
+
+### 크게보기:
+<img width="954" alt="Screen Shot 2022-09-03 at 7 22 13 PM" src="https://user-images.githubusercontent.com/69628701/188266336-b0800414-7d94-4557-9c02-506923c93b7f.png">
 
 ## 날짜검색:
 <img width="941" alt="Screen Shot 2022-09-02 at 3 47 48 AM" src="https://user-images.githubusercontent.com/69628701/187990078-46a78969-a8cc-4b1d-83c9-fad9d161428b.png">
