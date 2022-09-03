@@ -15,7 +15,7 @@ creator: Woongi Han
 <img width="954" alt="Screen Shot 2022-09-03 at 7 22 13 PM" src="https://user-images.githubusercontent.com/69628701/188266336-b0800414-7d94-4557-9c02-506923c93b7f.png">
 
 ## 날짜검색:
-<img width="941" alt="Screen Shot 2022-09-02 at 3 47 48 AM" src="https://user-images.githubusercontent.com/69628701/187990078-46a78969-a8cc-4b1d-83c9-fad9d161428b.png">
+<img width="952" alt="Screen Shot 2022-09-03 at 7 27 34 PM" src="https://user-images.githubusercontent.com/69628701/188266462-d697c9d3-cf02-46d7-a977-1563cd7d99cb.png">
 
 ## 반응형 - 모바일:
 <img width="284" alt="Screen Shot 2022-09-03 at 7 02 11 PM" src="https://user-images.githubusercontent.com/69628701/188266264-4462970d-0d78-4196-bca6-d2552b1025ef.png">
