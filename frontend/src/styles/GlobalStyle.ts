@@ -1,4 +1,5 @@
 import { createGlobalStyle } from "styled-components";
+import { MOBILE_WIDTH } from "../consts/consts";
 
 export const GlobalStyle = createGlobalStyle`
 
@@ -84,6 +85,7 @@ table {
   
 *:focus, *:focus-visible {
   outline: none;
+  color: inherit;
 }
 
 button {
@@ -106,8 +108,11 @@ button {
     transition: color 0.25s;
   }
 }
-}
 
+}
+@media (max-width: ${MOBILE_WIDTH}px) {
+  *:hover { color: white !important; border-color: white !important;}
+}
 textarea {
   font-family: inherit;
 }

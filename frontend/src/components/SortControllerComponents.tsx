@@ -154,8 +154,10 @@ export default function SortControllerComponents({
           <DateText>
             {selectedOptions.filterByDate.startDate &&
               (selectedOptions.filterByDate.endDate
-                ? `${selectedOptions.filterByDate.startDate.toLocaleDateString()} ~ ${selectedOptions.filterByDate.endDate.toLocaleDateString()}`
-                : selectedOptions.filterByDate.startDate.toLocaleDateString())}
+                ? `${selectedOptions.filterByDate.startDate.toLocaleDateString(
+                    "ko-KR"
+                  )} ~ ${selectedOptions.filterByDate.endDate.toLocaleDateString("ko-KR")}`
+                : selectedOptions.filterByDate.startDate.toLocaleDateString("ko-KR"))}
           </DateText>
           {selectedOptions.filterByDate.startDate && (
             <CancelIcon
@@ -306,6 +308,7 @@ const FilterInput = styled.div`
     margin-left: 1rem;
     padding: 0.3rem;
     border-radius: 8px;
+    font-size: 1rem;
   }
   label {
     display: block;
@@ -349,8 +352,8 @@ const FilterInput = styled.div`
   }
 `;
 const CancelIcon = styled(MdCancel)`
-  right: 0.3rem;
-  position: absolute;
+  margin: 0 0.3rem;
+
   z-index: 10;
 `;
 const CalendarIconWrapper = styled(SelectBoxContainer)`
@@ -365,6 +368,7 @@ const CalendarIcon = styled(GoCalendar)`
 `;
 const DateText = styled.div`
   text-align: right;
+  font-size: 0.8rem;
 `;
 const CheckedFilterSelection = styled(SelectBox)`
   width: 20%;
