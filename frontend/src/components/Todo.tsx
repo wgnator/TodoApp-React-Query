@@ -70,7 +70,7 @@ export default function Todo({
           <DateInfo>
             {`${sortOptionsDictionary[showingDateType.criterion]}: ${new Date(
               todo[showingDateType.criterion]
-            ).toLocaleString()}`}
+            ).toLocaleString("ko-KR")}`}
           </DateInfo>
           {todo.checked && <Checkmark />}
         </>
@@ -89,7 +89,7 @@ export default function Todo({
             <DateInfo viewMode={viewMode}>
               {`${sortOptionsDictionary[showingDateType.criterion]}: ${new Date(
                 todo[showingDateType.criterion]
-              ).toLocaleDateString()}`}
+              ).toLocaleDateString("ko-KR")}`}
             </DateInfo>
             <Icons>
               <BiPencil
