@@ -14,7 +14,6 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <GlobalStyle />
         <MainRouter />
-        <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </AuthState.Provider>
   );

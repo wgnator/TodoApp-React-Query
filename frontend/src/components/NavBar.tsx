@@ -34,31 +34,19 @@ const Container = styled.div`
 
 const Title = styled.h1`
   flex-shrink: 0;
-  @media (max-width: 720px) {
+  @media (max-width: 620px) {
     font-size: 2rem;
   }
 `;
 
 const UserInfo = styled.div`
   flex-shrink: 0;
-  @media (max-width: 720px) {
+  @media (max-width: 620px) {
     width: fit-content;
 
     > span {
       display: none;
     }
-    /* > span:first-child {
-      width: 3rem;
-      height: 3rem;
-      display: inline-block;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      border: 1px solid white;
-      border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    } */
   }
 `;
 

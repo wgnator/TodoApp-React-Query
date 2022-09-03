@@ -21,6 +21,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { theme } from "../styles/theme";
 import { IoIosArrowDropdown, IoIosArrowDropup } from "react-icons/io";
+import useDetectOutsideClick from "../hooks/useDetectOutsideClick";
 
 type DateItemPropsType = {
   selectedAsStart?: boolean;
@@ -36,6 +37,10 @@ export type SelectedDatesType = {
   startDate: Date | null;
   endDate: Date | null;
 };
+type OutboundDateType = {
+  startDate?: Date | null;
+  endDate?: Date | null;
+};
 export default function DatePicker({
   beginningDate,
   indicatedDates,
@@ -45,9 +50,10 @@ export default function DatePicker({
   beginningDate: Date;
   indicatedDates: Date[] | null;
   preSelectedDates: SelectedDatesType;
-  callback: (selectedDates: { startDate?: Date | null; endDate?: Date | null }) => void;
+  callback: (selectedDates: OutboundDateType | null, isClosed?: boolean) => void;
 }) {
   const today = useRef<Date>(new Date());
+  const containerRef = useRef<HTMLDivElement>(null);
   const windowRef = useRef<HTMLDivElement>(null);
   const monthsContainerRef = useRef<HTMLDivElement>(null);
   const monthRef = useRef<HTMLDivElement>(null);
@@ -70,7 +76,7 @@ export default function DatePicker({
 
   useEffect(() => {
     if (windowRef.current && monthsContainerRef.current && monthRef.current)
-      setScrollTop(monthHeight * (numOfMonths - 1));
+      setScrollTop(Math.max(monthHeight * (numOfMonths - 1), 0));
   }, [monthHeight]);
 
   useEffect(() => {
@@ -83,12 +89,17 @@ export default function DatePicker({
     return () => windowRef?.current?.removeEventListener("scroll", rerenderOnScroll);
   }, []);
 
+  useDetectOutsideClick([containerRef], () => {
+    console.log("detected outside click");
+    callback(null, true);
+  });
   return (
-    <Container>
+    <Container ref={containerRef} className="date-picker">
       {scrollTop > 0 && (
         <ArrowUpWrapper>
           <Clickable
-            onClick={() => {
+            onClick={(event) => {
+              event.stopPropagation();
               setScrollTop(
                 scrollTop -
                   (Math.floor(scrollTop % monthHeight) === 0
@@ -103,7 +114,8 @@ export default function DatePicker({
       {scrollTop < monthHeight * (numOfMonths - 1) && (
         <ArrowDownWrapper>
           <Clickable
-            onClick={() => {
+            onClick={(event) => {
+              event.stopPropagation();
               setScrollTop(
                 scrollTop +
                   (Math.floor(monthHeight - (scrollTop % monthHeight)) === 0
@@ -186,7 +198,7 @@ export default function DatePicker({
 }
 const ArrowDownWrapper = styled.div`
   position: absolute;
-  right: 2rem;
+  right: 4rem;
   bottom: 1rem;
   width: 1rem;
   height: 1rem;
@@ -195,7 +207,7 @@ const ArrowDownWrapper = styled.div`
 `;
 const ArrowUpWrapper = styled.div`
   position: absolute;
-  right: 4rem;
+  right: 2rem;
   bottom: 1rem;
   width: 1rem;
   height: 1rem;
