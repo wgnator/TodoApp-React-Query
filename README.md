@@ -69,12 +69,12 @@ https://youtu.be/iJ8VVzAbKL4
 
 ## Frontend
 1. Login / Sign Up
-- User Data Fetch: useLogin hook - Axios 로 인스턴스화 된 request를 사용, Axios Interceptor를 이용한 API 측 에러 핸들링
-- Login State - Context API 를 이용한 전역 로그인 상태 관리
-- Sign Up: generator 함수를 사용하여 비밀번호 재확인 및 회원등록 api 요청 / API에서 반환되는 에러(예: 중복 사용자) 와 app 상의 에러(아이디 형식/비밀번호 재확인 오류)를 모아 한번에 처리 
+- Login: useLogin hook - Axios 로 인스턴스화 된 request를 사용, Axios Interceptor를 이용한 API 측 에러(아이디/비밀번호 오류) 핸들링
+- Login State - Local Storage 에 토큰 저장
+- Sign Up: 비밀번호 재확인 및 회원 등록 api 요청 / API에서 반환되는 에러(예: 중복 사용자) 와 app 상의 에러(아이디 형식/비밀번호 재확인 오류)를 모아 한번에 처리 
 
 2. Data Fetch
-- useTodoQuery hook - axios 인스턴스에 React Query를 사용한 데이터 request 및 에러 핸들링
+- useTodoQuery hook - axios 인스턴스에 React Query를 사용하여 페이지네이션된 데이터 펫칭 및 에러 핸들링
 
 3. Todos Layout
 - 항목들을 작게보기 / 크게보기 선택 가능
