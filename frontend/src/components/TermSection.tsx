@@ -2,24 +2,27 @@ import styled from "styled-components";
 import { theme } from "../styles/theme";
 import { MdExpandLess, MdExpandMore } from "react-icons/md";
 import { ReactNode, useState } from "react";
-import { TermDictionary } from "../consts/consts";
+import { TermDictionary } from "../hooks/useSortTodo";
 
 export default function TermSection({
   children,
   termText,
 }: {
   children: ReactNode | ReactNode[];
-  termText: keyof typeof TermDictionary;
+  termText: typeof TermDictionary[keyof typeof TermDictionary]["korean"];
 }) {
   const [isExpanded, setIsExpanded] = useState(true);
 
   return (
-    <TermSectionContainer>
+    <TermSectionContainer
+      onClick={(event) => {
+        event.stopPropagation();
+        setIsExpanded(!isExpanded);
+      }}
+    >
       <TermText>{termText}</TermText>
       {isExpanded && children}
-      <ExpandIcon onClick={() => setIsExpanded(!isExpanded)}>
-        {isExpanded ? <MdExpandLess /> : <MdExpandMore />}
-      </ExpandIcon>
+      <ExpandIcon>{isExpanded ? <MdExpandLess /> : <MdExpandMore />}</ExpandIcon>
     </TermSectionContainer>
   );
 }

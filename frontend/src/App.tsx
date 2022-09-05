@@ -1,5 +1,4 @@
 import { QueryClient, QueryClientProvider } from "react-query";
-import { ReactQueryDevtools } from "react-query/devtools";
 import { AuthState } from "./contexts/AuthContext";
 import useLogin from "./hooks/useLogin";
 import MainRouter from "./routes/MainRouter";

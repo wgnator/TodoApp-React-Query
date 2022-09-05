@@ -1,28 +1,28 @@
 import { useEffect, useReducer } from "react";
 import { useParams } from "react-router-dom";
 
-type TodoPageState = {
+type TodoDisplayState = {
   showingContentTodoID: string | null;
   composingTodoID: string | null;
 };
-type TodoPageStateReducerAction = {
+type TodoDisplayStateReducerAction = {
   type: keyof typeof ACTIONS;
   todoIDPayload?: null | string;
 };
 
-const initialState: TodoPageState = {
+const initialState: TodoDisplayState = {
   showingContentTodoID: null,
   composingTodoID: null,
 };
 
-export type TodoDispatch = (value: TodoPageStateReducerAction) => void;
+export type TodoDispatch = (value: TodoDisplayStateReducerAction) => void;
 
 export const ACTIONS = {
   SET_SHOWING_CONTENT_TODO_ID: "SET_SHOWING_CONTENT_TODO_ID",
   SET_COMPOSING_TODO_ID: "SET_COMPOSING_TODO_ID",
 } as const;
 
-const todoPageStateReducer: React.Reducer<TodoPageState, TodoPageStateReducerAction> = (
+const todoDisplayStateReducer: React.Reducer<TodoDisplayState, TodoDisplayStateReducerAction> = (
   state,
   action
 ) => {
@@ -35,23 +35,25 @@ const todoPageStateReducer: React.Reducer<TodoPageState, TodoPageStateReducerAct
         return { ...state, composingTodoID: action.todoIDPayload };
     default:
       throw new Error(
-        `todoPageStateReducer action type/payload error. Received action: ${JSON.stringify(action)}`
+        `todoDisplayStateReducer action type/payload error. Received action: ${JSON.stringify(
+          action
+        )}`
       );
   }
 };
 
-export default function useTodoPageStateReducer() {
+export default function useTodoDisplayStateReducer() {
   const { showingTodoIDParam } = useParams();
 
-  const initializer = (initialState: TodoPageState) => ({
+  const initializer = (initialState: TodoDisplayState) => ({
     ...initialState,
     showingContentTodoID: showingTodoIDParam || null,
   });
 
-  const [pageState, dispatch] = useReducer<
-    React.Reducer<TodoPageState, TodoPageStateReducerAction>,
-    TodoPageState
-  >(todoPageStateReducer, initialState, initializer);
+  const [todoDisplayStates, dispatch] = useReducer<
+    React.Reducer<TodoDisplayState, TodoDisplayStateReducerAction>,
+    TodoDisplayState
+  >(todoDisplayStateReducer, initialState, initializer);
 
   useEffect(() => {
     if (showingTodoIDParam)
@@ -59,5 +61,5 @@ export default function useTodoPageStateReducer() {
     else dispatch({ type: ACTIONS.SET_SHOWING_CONTENT_TODO_ID, todoIDPayload: null });
   }, [showingTodoIDParam]);
 
-  return { pageState, dispatch, showingTodoIDParam };
+  return { todoDisplayStates, dispatch, showingTodoIDParam };
 }

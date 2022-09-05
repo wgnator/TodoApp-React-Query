@@ -3,8 +3,15 @@ import { GoTriangleDown } from "react-icons/go";
 import { ReactElement, RefObject, useRef, useState } from "react";
 import { theme } from "../styles/theme";
 import useDetectOutsideClick from "../hooks/useDetectOutsideClick";
+import { MOBILE_WIDTH } from "../consts/consts";
 
-export default function SelectBox({ children }: { children: ReactElement[] }) {
+export default function SelectBox({
+  children,
+  icon,
+}: {
+  children: ReactElement[];
+  icon?: ReactElement;
+}) {
   const [isSelecting, setIsSelecting] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -18,6 +25,7 @@ export default function SelectBox({ children }: { children: ReactElement[] }) {
         setIsSelecting(!isSelecting);
       }}
     >
+      {icon && <Icon>{icon}</Icon>}
       {isSelecting ? (
         <OptionsWrapper>{children}</OptionsWrapper>
       ) : (
@@ -40,14 +48,19 @@ export const Container = styled.div`
   padding: 0.3rem 0.3rem;
   display: flex;
   align-items: center;
+  gap: 0.5rem;
   cursor: pointer;
+
+  * {
+    word-break: keep-all;
+  }
 `;
 const SelectedOption = styled.div`
   width: calc(100% - 1.3rem);
   display: flex;
   justify-content: center;
   align-items: center;
-  @media (max-width: 620px) {
+  @media (max-width: ${MOBILE_WIDTH}px) {
     width: 100%;
   }
 `;
@@ -85,8 +98,7 @@ const OptionsWrapper = styled.div`
     }
   }
 `;
-const TriangleDown = styled(GoTriangleDown)`
-  position: absolute;
+export const TriangleDown = styled(GoTriangleDown)`
   right: 0.3rem;
   width: 1rem;
   height: 1rem;
@@ -94,7 +106,11 @@ const TriangleDown = styled(GoTriangleDown)`
   * {
     color: white;
   }
-  @media (max-width: 620px) {
+  /* @media (max-width: ${MOBILE_WIDTH}px) {
     display: none;
-  }
+  } */
+`;
+
+const Icon = styled.div`
+  width: 10%;
 `;

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { useTodoContext } from "../contexts/TodoContext";
 import { SentTodoData } from "../types/types";

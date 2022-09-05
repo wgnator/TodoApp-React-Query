@@ -1,146 +1,151 @@
 import { useState } from "react";
-import { ReceivedTodoData } from "../types/types";
+import { CustomObject, ReceivedTodoData } from "../types/types";
 import { isToday, isThisWeek, isThisMonth, isSameDay, isWithinInterval } from "date-fns";
-import { TermDictionary } from "../consts/consts";
 import { SelectedDatesType } from "../components/DatePicker";
-import { todosDBService } from "../services/todosDBService";
 
-export const SORT_OPTIONS = {
+export const DATE_TYPE = {
   UPDATED_AT: "updatedAt",
   CREATED_AT: "createdAt",
-  NEWEST_FIRST: "newestFirst",
-  OLDEST_FIRST: "oldestFirst",
 } as const;
 
-export const sortOptionsDictionary = {
+export type DateTypes = typeof DATE_TYPE[keyof typeof DATE_TYPE];
+export type OrderTypes = typeof ORDER[keyof typeof ORDER];
+
+export const ORDER = {
+  DSC: "DSC",
+  ASC: "ASC",
+};
+
+export const sortOptionsDictionary: {
+  [K in typeof DATE_TYPE[keyof typeof DATE_TYPE] | typeof ORDER[keyof typeof ORDER]]: string;
+} = {
   updatedAt: "수정",
   createdAt: "등록",
-  newestFirst: "최근",
-  oldestFirst: "오래된",
+  DSC: "최근",
+  ASC: "오래된",
+};
+
+export const TermDictionary = {
+  today: { korean: "오늘", sequence: 0 },
+  thisWeek: { korean: "이번주", sequence: 1 },
+  thisMonth: { korean: "이번달", sequence: 2 },
+  past: { korean: "이전", sequence: 3 },
 } as const;
 
-export type OrderByType = {
-  criterion: typeof SORT_OPTIONS["UPDATED_AT"] | typeof SORT_OPTIONS["CREATED_AT"];
-  order: typeof SORT_OPTIONS["NEWEST_FIRST"] | typeof SORT_OPTIONS["OLDEST_FIRST"];
-};
+type TermDictionaryKey = keyof typeof TermDictionary;
+
+export const FILTER_BY_CHECKED_OPTIONS = {
+  CHECKED: true,
+  UNCHECKED: false,
+  UNFILTERED: null,
+} as const;
+
+export type FilterByCheckedOptions =
+  typeof FILTER_BY_CHECKED_OPTIONS[keyof typeof FILTER_BY_CHECKED_OPTIONS];
+
 export type SelectedOptionsType = {
-  orderBy: OrderByType;
-  filterByStringIncluding: string;
-  filterByIsChecked: boolean | null;
-  filterByDate: SelectedDatesType;
+  dateType: DateTypes;
+  orderBy: OrderTypes;
+  searchString: string;
+  checkedState: typeof FILTER_BY_CHECKED_OPTIONS[keyof typeof FILTER_BY_CHECKED_OPTIONS];
+  dateRange: SelectedDatesType;
 };
 
-export type OrderTodosByType = (
-  todos: ReceivedTodoData[],
-  criterion: OrderByType["criterion"],
-  order: OrderByType["order"]
-) => ReceivedTodoData[];
+const initialSelectedOptionsState: SelectedOptionsType = {
+  dateType: DATE_TYPE.CREATED_AT,
+  orderBy: ORDER.DSC,
+  searchString: "",
+  checkedState: FILTER_BY_CHECKED_OPTIONS.UNFILTERED,
+  dateRange: { startDate: null, endDate: null },
+};
 
-export type FilterTodosByCheckedType = (
-  todos: ReceivedTodoData[],
-  isValue: null | boolean
-) => ReceivedTodoData[];
-
-export type FilterTodosByStringType = (
-  todos: ReceivedTodoData[],
-  searchString: string
-) => ReceivedTodoData[];
-
-export const initialSelectedOptionsState: SelectedOptionsType = {
-  orderBy: { criterion: SORT_OPTIONS.CREATED_AT, order: SORT_OPTIONS.NEWEST_FIRST },
-  filterByStringIncluding: "",
-  filterByIsChecked: null,
-  filterByDate: { startDate: null, endDate: null },
+type ReducedTodosType = {
+  [K in TermDictionaryKey]: ReceivedTodoData[];
 };
 
 export default function useSortTodo() {
   const [selectedOptions, setSelectedOptions] = useState<SelectedOptionsType>(
     initialSelectedOptionsState
   );
-  const orderTodosBy: OrderTodosByType = (todos, criterion, order) =>
-    todos &&
-    (order === SORT_OPTIONS.NEWEST_FIRST
-      ? [...todos].sort(
-          (a: ReceivedTodoData, b: ReceivedTodoData) =>
-            new Date(b[criterion]).getTime() - new Date(a[criterion]).getTime()
-        )
-      : [...todos].sort(
-          (a: ReceivedTodoData, b: ReceivedTodoData) =>
-            new Date(a[criterion]).getTime() - new Date(b[criterion]).getTime()
-        ));
 
-  const filterTodosByChecked: FilterTodosByCheckedType = (todos, isValue) =>
-    isValue === null ? todos : todos?.filter((todo: ReceivedTodoData) => todo.checked === isValue);
+  const sortTodosByOrder = {
+    [ORDER.DSC]: (a: ReceivedTodoData, b: ReceivedTodoData) =>
+      new Date(b[selectedOptions.dateType]).getTime() -
+      new Date(a[selectedOptions.dateType]).getTime(),
+    [ORDER.ASC]: (a: ReceivedTodoData, b: ReceivedTodoData) =>
+      new Date(a[selectedOptions.dateType]).getTime() -
+      new Date(b[selectedOptions.dateType]).getTime(),
+  };
 
-  const filterTodosByString: FilterTodosByStringType = (todos, searchString) =>
-    todos &&
-    todos.filter(
-      (todo: ReceivedTodoData) =>
-        todo.title.includes(searchString) || todo.content.includes(searchString)
-    );
+  const filterTodosByChecked = (todo: ReceivedTodoData) =>
+    selectedOptions.checkedState === FILTER_BY_CHECKED_OPTIONS.UNFILTERED
+      ? true
+      : todo.checked === selectedOptions.checkedState;
 
-  const filterTodosByDate = (
-    todos: ReceivedTodoData[],
-    criterion: OrderByType["criterion"],
-    options: SelectedDatesType
-  ) =>
-    options.startDate && options.endDate && todos
-      ? todos.filter(
-          (todo) =>
-            options.startDate &&
-            options.endDate &&
-            isWithinInterval(new Date(todo[criterion]), {
-              start: options.startDate,
-              end: options.endDate,
-            })
-        )
-      : options.startDate && todos
-      ? todos.filter(
-          (todo) => options.startDate && isSameDay(new Date(todo[criterion]), options.startDate)
-        )
-      : todos;
+  const filterTodosByString = (todo: ReceivedTodoData) =>
+    todo.title.includes(selectedOptions.searchString) ||
+    todo.content.includes(selectedOptions.searchString);
 
-  const sortTodos = (todos: ReceivedTodoData[], options: SelectedOptionsType) =>
-    filterTodosByDate(
-      filterTodosByString(
-        filterTodosByChecked(
-          orderTodosBy(todos, options.orderBy.criterion, options.orderBy.order),
-          options.filterByIsChecked
-        ),
-        options.filterByStringIncluding
-      ),
-      options.orderBy.criterion,
-      options.filterByDate
-    );
+  const filterTodosBySingleDate = (todo: ReceivedTodoData) =>
+    !!selectedOptions.dateRange.startDate &&
+    isSameDay(new Date(todo[selectedOptions.dateType]), selectedOptions.dateRange.startDate);
 
-  const reduceTodos = (
-    todos: ReceivedTodoData[]
-  ): { [value in keyof typeof TermDictionary]: ReceivedTodoData[] } =>
-    todos.reduce(
-      (prev, curr: ReceivedTodoData, _, todos) => {
-        if (isToday(new Date(curr[selectedOptions.orderBy.criterion]))) {
-          prev.today.push(curr);
-          return prev;
-        }
-        if (isThisWeek(new Date(curr[selectedOptions.orderBy.criterion]))) {
-          prev.thisWeek.push(curr);
-          return prev;
-        }
-        if (isThisMonth(new Date(curr[selectedOptions.orderBy.criterion]))) {
-          prev.thisMonth.push(curr);
-          return prev;
-        }
+  const filterTodosByDateRange = (todo: ReceivedTodoData) =>
+    !!selectedOptions.dateRange.startDate &&
+    !!selectedOptions.dateRange.endDate &&
+    isWithinInterval(new Date(todo[selectedOptions.dateType]), {
+      start: selectedOptions.dateRange.startDate,
+      end: selectedOptions.dateRange.endDate,
+    });
+
+  const sortTodos = (todos: ReceivedTodoData[]) =>
+    todos
+      .filter(filterTodosByChecked)
+      .filter(filterTodosByString)
+      .filter(
+        selectedOptions.dateRange.startDate
+          ? selectedOptions.dateRange.endDate
+            ? filterTodosByDateRange
+            : filterTodosBySingleDate
+          : () => true
+      )
+      .sort(sortTodosByOrder[selectedOptions.orderBy]);
+
+  const CustomObject = Object as CustomObject;
+
+  const reduceTodos = (todos: ReceivedTodoData[]) =>
+    CustomObject.entries<ReceivedTodoData[], TermDictionaryKey>(
+      todos.reduce(
+        (prev: ReducedTodosType, curr: ReceivedTodoData): ReducedTodosType => {
+          if (isToday(new Date(curr[selectedOptions.dateType]))) {
+            prev.today.push(curr);
+            return prev;
+          }
+          if (isThisWeek(new Date(curr[selectedOptions.dateType]), { weekStartsOn: 1 })) {
+            prev.thisWeek.push(curr);
+            return prev;
+          }
+          if (isThisMonth(new Date(curr[selectedOptions.dateType]))) {
+            prev.thisMonth.push(curr);
+            return prev;
+          }
+          {
+            prev.past.push(curr);
+            return prev;
+          }
+        },
         {
-          prev.past.push(curr);
-          return prev;
-        }
-      },
-      {
-        today: [] as ReceivedTodoData[],
-        thisWeek: [] as ReceivedTodoData[],
-        thisMonth: [] as ReceivedTodoData[],
-        past: [] as ReceivedTodoData[],
-      }
+          today: [],
+          thisWeek: [],
+          thisMonth: [],
+          past: [],
+        } as ReducedTodosType
+      )
+    ).sort(
+      (a: [TermDictionaryKey, ReceivedTodoData[]], b: [TermDictionaryKey, ReceivedTodoData[]]) =>
+        selectedOptions.orderBy === ORDER.DSC
+          ? TermDictionary[a[0]].sequence - TermDictionary[b[0]].sequence
+          : TermDictionary[b[0]].sequence - TermDictionary[a[0]].sequence
     );
 
   return {
@@ -148,8 +153,5 @@ export default function useSortTodo() {
     setSelectedOptions,
     sortTodos,
     reduceTodos,
-    orderTodosBy,
-    filterTodosByChecked,
-    filterTodosByString,
   };
 }

@@ -12,3 +12,7 @@ export interface SentTodoData {
   checked?: boolean;
   id?: string;
 }
+
+export interface CustomObject extends ObjectConstructor {
+  entries<T, K>(o: { [k: K]: T } | ArrayLike<T>): [K, T][];
+}

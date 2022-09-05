@@ -14,22 +14,32 @@ export const createTodo = async (req: Request, res: Response) => {
 
     return res.status(StatusCodes.OK).send(createResponse(todo));
   } else {
-    return res.status(StatusCodes.BAD_REQUEST).send(createError(TODO_VALIDATION_ERRORS.INVALID_VALUE));
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .send(createError(TODO_VALIDATION_ERRORS.INVALID_VALUE));
   }
 };
 
 export const getTodos = async (req: Request, res: Response) => {
-  const { countOnly } = req.query;
-
+  const { itemsPerPage = 10, page = 0, countOnly } = req.query;
   const todos = todoService.findTodos();
+
+  const pageEndIndex = todos ? Math.max(todos.length - Number(itemsPerPage) * Number(page), 0) : 0;
+  const pageStartIndex = todos
+    ? Math.max(todos.length - Number(itemsPerPage) * Number(page) - Number(itemsPerPage), 0)
+    : 0;
 
   if (todos) {
     if (countOnly) {
       return res.status(StatusCodes.OK).send(createResponse(todos.length));
     }
-    return res.status(StatusCodes.OK).send(createResponse(todos));
+    return res
+      .status(StatusCodes.OK)
+      .send(createResponse({ result: todos.slice(pageStartIndex, pageEndIndex), page: page }));
   } else {
-    return res.status(StatusCodes.BAD_REQUEST).send(createError(TODO_VALIDATION_ERRORS.TODO_SOMETHING_WRONG));
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .send(createError(TODO_VALIDATION_ERRORS.TODO_SOMETHING_WRONG));
   }
 };
 
@@ -41,7 +51,9 @@ export const getTodoById = (req: Request, res: Response) => {
   if (todo) {
     return res.status(StatusCodes.OK).send(createResponse(todo));
   } else {
-    return res.status(StatusCodes.BAD_REQUEST).send(createError(TODO_VALIDATION_ERRORS.TODO_SOMETHING_WRONG));
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .send(createError(TODO_VALIDATION_ERRORS.TODO_SOMETHING_WRONG));
   }
 };
 
@@ -56,7 +68,9 @@ export const updateTodo = async (req: Request, res: Response) => {
 
     return res.status(StatusCodes.OK).send(createResponse(todo));
   } else {
-    return res.status(StatusCodes.BAD_REQUEST).send(createError(TODO_VALIDATION_ERRORS.TODO_SOMETHING_WRONG));
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .send(createError(TODO_VALIDATION_ERRORS.TODO_SOMETHING_WRONG));
   }
 };
 
@@ -66,7 +80,9 @@ export const deleteTodo = async (req: Request, res: Response) => {
   const todo = todoService.findTodo((todo) => todo.id === todoId);
 
   if (!todo) {
-    return res.status(StatusCodes.BAD_REQUEST).send(createError(TODO_VALIDATION_ERRORS.TODO_SOMETHING_WRONG));
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .send(createError(TODO_VALIDATION_ERRORS.TODO_SOMETHING_WRONG));
   }
 
   await todoService.deleteTodo(todo);

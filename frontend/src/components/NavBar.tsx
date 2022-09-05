@@ -1,7 +1,8 @@
 import { useContext } from "react";
 import styled from "styled-components";
+import { MOBILE_WIDTH } from "../consts/consts";
 import { AuthState } from "../contexts/AuthContext";
-import { ViewModeContext, VIEW_MODE } from "../contexts/ViewModeContext";
+import { ViewModeContext } from "../contexts/ViewModeContext";
 
 export default function NavBar() {
   const { userName, logout } = useContext(AuthState);
@@ -9,12 +10,14 @@ export default function NavBar() {
   return (
     <Container>
       <Title>ToDo App</Title>
-      <ViewMode onClick={() => toggleViewMode()}>{viewMode}</ViewMode>
-      <UserInfo>
-        <span>{userName}</span>
-        <span>님, 안녕하세요!</span>
+      <ButtonsWrapper>
+        <UserInfo>
+          <span>{userName}</span>
+          <span>님, 안녕하세요!</span>
+        </UserInfo>
+        <ViewMode onClick={() => toggleViewMode()}>{viewMode}</ViewMode>
         <LogoutButton onClick={() => logout()}>로그아웃</LogoutButton>
-      </UserInfo>
+      </ButtonsWrapper>
     </Container>
   );
 }
@@ -34,14 +37,18 @@ const Container = styled.div`
 
 const Title = styled.h1`
   flex-shrink: 0;
-  @media (max-width: 620px) {
+  @media (max-width: ${MOBILE_WIDTH}px) {
     font-size: 2rem;
   }
 `;
-
+const ButtonsWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+`;
 const UserInfo = styled.div`
   flex-shrink: 0;
-  @media (max-width: 620px) {
+  @media (max-width: ${MOBILE_WIDTH}px) {
     width: fit-content;
 
     > span {
@@ -53,7 +60,6 @@ const UserInfo = styled.div`
 const LogoutButton = styled.button`
   height: 2.5rem;
   flex-shrink: 0;
-  margin-left: 1rem;
 `;
 
 const ViewMode = styled.button`

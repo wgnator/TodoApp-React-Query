@@ -17,11 +17,12 @@ import {
   startOfMonth,
 } from "date-fns";
 import { addMonths, compareAsc } from "date-fns/esm";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import styled from "styled-components";
 import { theme } from "../styles/theme";
 import { IoIosArrowDropdown, IoIosArrowDropup } from "react-icons/io";
 import useDetectOutsideClick from "../hooks/useDetectOutsideClick";
+import { MOBILE_WIDTH } from "../consts/consts";
 
 type DateItemPropsType = {
   selectedAsStart?: boolean;
@@ -41,43 +42,47 @@ type OutboundDateType = {
   startDate?: Date | null;
   endDate?: Date | null;
 };
+
+const MONTH_HEIGHT = 360;
+
 export default function DatePicker({
   beginningDate,
   indicatedDates,
   preSelectedDates,
-  callback,
+  setDates,
+  close,
 }: {
   beginningDate: Date;
   indicatedDates: Date[] | null;
   preSelectedDates: SelectedDatesType;
-  callback: (selectedDates: OutboundDateType | null, isClosed?: boolean) => void;
+  setDates: (selectedDates: OutboundDateType | null) => void;
+  close: () => void;
 }) {
   const today = useRef<Date>(new Date());
   const containerRef = useRef<HTMLDivElement>(null);
   const windowRef = useRef<HTMLDivElement>(null);
-  const monthsContainerRef = useRef<HTMLDivElement>(null);
-  const monthRef = useRef<HTMLDivElement>(null);
-  const numOfMonths = differenceInCalendarMonths(today.current, beginningDate) + 1;
-  const [monthHeight, setMonthHeight] = useState(0);
+  const numOfMonths = useMemo<number>(
+    () => differenceInCalendarMonths(today.current, beginningDate) + 1,
+    []
+  );
   const [scrollTop, setScrollTop] = useState(0);
   const { startDate, endDate } = preSelectedDates;
 
   const handleDateSelection = (selectedDate: Date) => {
-    if (startDate === null || (startDate && endDate))
-      callback({ startDate: startOfDay(selectedDate), endDate: null });
-    else if (compareAsc(selectedDate, startDate) > 0) callback({ endDate: endOfDay(selectedDate) });
-    else callback({ startDate: selectedDate });
+    const shouldStartNew = () => startDate === null || (startDate && endDate);
+    const isSecondDateSameOrEarlier = () => startDate && compareAsc(selectedDate, startDate) <= 0;
+    const isSecondDateLater = () => startDate && compareAsc(selectedDate, startDate) > 0;
+    if (shouldStartNew() || isSecondDateSameOrEarlier())
+      setDates({ startDate: startOfDay(selectedDate), endDate: null });
+    else if (isSecondDateLater()) {
+      setDates({ endDate: endOfDay(selectedDate) });
+      close();
+    }
   };
 
-  useLayoutEffect(() => {
-    if (monthsContainerRef.current)
-      setMonthHeight(parseFloat(getComputedStyle(monthsContainerRef.current).height) / numOfMonths);
-  }, []);
-
   useEffect(() => {
-    if (windowRef.current && monthsContainerRef.current && monthRef.current)
-      setScrollTop(Math.max(monthHeight * (numOfMonths - 1), 0));
-  }, [monthHeight]);
+    setScrollTop(Math.max(MONTH_HEIGHT * (numOfMonths - 1), 0));
+  }, [MONTH_HEIGHT]);
 
   useEffect(() => {
     if (windowRef.current) windowRef.current.scrollTop = scrollTop;
@@ -89,12 +94,10 @@ export default function DatePicker({
     return () => windowRef?.current?.removeEventListener("scroll", rerenderOnScroll);
   }, []);
 
-  useDetectOutsideClick([containerRef], () => {
-    console.log("detected outside click");
-    callback(null, true);
-  });
+  useDetectOutsideClick([containerRef], () => close());
+
   return (
-    <Container ref={containerRef} className="date-picker">
+    <Container ref={containerRef}>
       {scrollTop > 0 && (
         <ArrowUpWrapper>
           <Clickable
@@ -102,39 +105,37 @@ export default function DatePicker({
               event.stopPropagation();
               setScrollTop(
                 scrollTop -
-                  (Math.floor(scrollTop % monthHeight) === 0
-                    ? monthHeight
-                    : scrollTop % monthHeight)
+                  (scrollTop % MONTH_HEIGHT === 0 ? MONTH_HEIGHT : scrollTop % MONTH_HEIGHT)
               );
             }}
           />
           <IoIosArrowDropup width="100%" height="100%" />
         </ArrowUpWrapper>
       )}
-      {scrollTop < monthHeight * (numOfMonths - 1) && (
+      {scrollTop < MONTH_HEIGHT * (numOfMonths - 1) && (
         <ArrowDownWrapper>
           <Clickable
             onClick={(event) => {
               event.stopPropagation();
               setScrollTop(
                 scrollTop +
-                  (Math.floor(monthHeight - (scrollTop % monthHeight)) === 0
-                    ? monthHeight
-                    : monthHeight - (scrollTop % monthHeight))
+                  (MONTH_HEIGHT - (scrollTop % MONTH_HEIGHT) === 0
+                    ? MONTH_HEIGHT
+                    : MONTH_HEIGHT - (scrollTop % MONTH_HEIGHT))
               );
             }}
           />
           <IoIosArrowDropdown width="100%" height="100%" />
         </ArrowDownWrapper>
       )}
-      <WindowContainer ref={windowRef} className="window">
-        <MonthsContainer ref={monthsContainerRef}>
+      <WindowContainer ref={windowRef}>
+        <MonthsContainer>
           {new Array(numOfMonths).fill(0).map((_, index) => {
             const month = addMonths(beginningDate, index);
             const startDateOfCalendar = previousSunday(startOfMonth(month));
             const endDateOfCalendar = nextSunday(endOfMonth(month));
             return (
-              <MonthContainer key={index} ref={monthRef}>
+              <MonthContainer key={index}>
                 <MonthText>
                   {getYear(month)}년 {getMonth(month) + 1}월
                 </MonthText>
@@ -198,7 +199,7 @@ export default function DatePicker({
 }
 const ArrowDownWrapper = styled.div`
   position: absolute;
-  right: 4rem;
+  right: 1rem;
   bottom: 1rem;
   width: 1rem;
   height: 1rem;
@@ -207,8 +208,8 @@ const ArrowDownWrapper = styled.div`
 `;
 const ArrowUpWrapper = styled.div`
   position: absolute;
-  right: 2rem;
-  bottom: 1rem;
+  right: 1rem;
+  top: 1rem;
   width: 1rem;
   height: 1rem;
   margin: 0;
@@ -228,14 +229,16 @@ const Container = styled.div`
   right: 0;
   background-color: ${theme.backgroundColor};
   z-index: 10;
-  width: 400px;
+  width: 360px;
 
-  border: white 3px solid;
+  border: white 2px solid;
   overflow: hidden;
   border-radius: 10px;
-  @media (max-width: 480px) {
+
+  @media (max-width: ${MOBILE_WIDTH}px) {
     flex-direction: column;
-    width: 100%;
+    left: -2px;
+    width: 80vw;
     padding: 5%;
     overflow: auto;
   }
@@ -261,7 +264,7 @@ const MonthContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  @media (max-width: 480px) {
+  @media (max-width: ${MOBILE_WIDTH}px) {
     padding: 0;
     margin: 1rem auto;
   }

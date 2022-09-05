@@ -6,16 +6,18 @@ import { FcCheckmark } from "react-icons/fc";
 import styled from "styled-components";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTodoContext } from "../contexts/TodoContext";
-import { ACTIONS, TodoDispatch } from "../hooks/useTodoPageStateReducer";
+import { ACTIONS, TodoDispatch } from "../hooks/useTodoDisplayStateReducer";
 import { ReceivedTodoData } from "../types/types";
-import { useState } from "react";
+import React, { useState } from "react";
 import AlertDialog from "./AlertDialog";
 import { useViewModeContext, ViewModeOptions, VIEW_MODE } from "../contexts/ViewModeContext";
-import { OrderByType, sortOptionsDictionary } from "../hooks/useSortTodo";
+import { DateTypes, sortOptionsDictionary } from "../hooks/useSortTodo";
+import { MOBILE_WIDTH } from "../consts/consts";
+import { IconType } from "react-icons";
 
 type TodoProps = {
   todo: ReceivedTodoData;
-  showingDateType: OrderByType;
+  dateType: DateTypes;
   isComposing: boolean;
   isShowingContent: boolean;
   dispatch: TodoDispatch;
@@ -23,7 +25,7 @@ type TodoProps = {
 
 export default function Todo({
   todo,
-  showingDateType,
+  dateType,
   isComposing,
   isShowingContent,
   dispatch,
@@ -37,9 +39,37 @@ export default function Todo({
     if (showingTodoIDParam === todo.id) navigate("/");
     else navigate("/" + todo.id);
   };
+  const handleOnClickCheck = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    updateTodoMutation.mutate({ ...todo, checked: !todo.checked });
+  };
+  const handleOnClickEdit = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    dispatch({ type: ACTIONS.SET_COMPOSING_TODO_ID, todoIDPayload: todo.id });
+  };
+  const handleOnClickDelete = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    setIsShowingAlert(true);
+  };
 
+  const EditIcon = () => <BiPencil onClick={handleOnClickEdit} />;
+  const CheckIcon = ({ Wrapper }: { Wrapper: IconType }) => (
+    <Wrapper onClick={handleOnClickCheck} />
+  );
+  const DeleteIcon = () => <FiTrash2 onClick={handleOnClickDelete} />;
+  const DateInfo = ({ viewMode }: { viewMode?: ViewModeOptions }) => (
+    <DateInfoWrapper viewMode={viewMode}>
+      {`${sortOptionsDictionary[dateType]}: ${new Date(todo[dateType]).toLocaleString("ko-KR")}`}
+    </DateInfoWrapper>
+  );
   return (
-    <Container onClick={() => toggleShowContent()} layout={viewMode}>
+    <Container
+      onClick={(event) => {
+        event.stopPropagation();
+        toggleShowContent();
+      }}
+      layout={viewMode}
+    >
       {isComposing ? (
         <TodoInputForm
           prevData={todo}
@@ -51,59 +81,31 @@ export default function Todo({
           <UpperRow>
             <Title>{todo.title}</Title>
             <Icons>
-              <ImCheckmark2
-                onClick={(event) => {
-                  event.stopPropagation();
-                  updateTodoMutation.mutate({ ...todo, checked: !todo.checked });
-                }}
-              />
-              <BiPencil
-                onClick={() =>
-                  dispatch({ type: ACTIONS.SET_COMPOSING_TODO_ID, todoIDPayload: todo.id })
-                }
-              />
+              <CheckIcon Wrapper={ImCheckmark2} />
+              <EditIcon />
               <FiTrash2 onClick={() => setIsShowingAlert(true)} />
             </Icons>
           </UpperRow>
-
-          {isShowingContent && <Content>{todo.content}</Content>}
-          <DateInfo>
-            {`${sortOptionsDictionary[showingDateType.criterion]}: ${new Date(
-              todo[showingDateType.criterion]
-            ).toLocaleString("ko-KR")}`}
-          </DateInfo>
+          <Content>{todo.content}</Content>
+          <DateInfo />
           {todo.checked && <Checkmark />}
         </>
       ) : (
         <>
           <UpperRow>
-            <Checkbox
-              onClick={(event) => {
-                event.stopPropagation();
-                updateTodoMutation.mutate({ ...todo, checked: !todo.checked });
-              }}
-            >
-              {todo.checked && <CheckmarkMini />}
-            </Checkbox>
+            <Checkbox onClick={handleOnClickCheck}>{todo.checked && <CheckmarkMini />}</Checkbox>
             <Title>{todo.title}</Title>
-            <DateInfo viewMode={viewMode}>
-              {`${sortOptionsDictionary[showingDateType.criterion]}: ${new Date(
-                todo[showingDateType.criterion]
-              ).toLocaleDateString("ko-KR")}`}
-            </DateInfo>
+            {!isShowingContent && <DateInfo viewMode={viewMode} />}
             <Icons>
-              <BiPencil
-                onClick={() =>
-                  dispatch({ type: ACTIONS.SET_COMPOSING_TODO_ID, todoIDPayload: todo.id })
-                }
-              />
-              <FiTrash2 onClick={() => setIsShowingAlert(true)} />
+              <EditIcon />
+              <DeleteIcon />
             </Icons>
           </UpperRow>
           <LowerRow>
             {isShowingContent && (
               <>
                 <Content>{todo.content}</Content>
+                <DateInfo />
               </>
             )}
           </LowerRow>
@@ -125,6 +127,7 @@ export default function Todo({
 }
 export const Container = styled.div<{ layout?: ViewModeOptions }>`
   position: relative;
+  cursor: pointer;
   width: 100%;
   min-height: 5rem;
   padding: 0.5rem 0.5rem;
@@ -133,7 +136,6 @@ export const Container = styled.div<{ layout?: ViewModeOptions }>`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-
   gap: 0.3rem;
   transition: height 1s;
   ${(props) => props.layout === VIEW_MODE.MINI && `min-height: 0; gap:0;`}
@@ -155,11 +157,11 @@ const Title = styled.h2`
   white-space: nowrap;
   text-overflow: ellipsis;
 `;
-const DateInfo = styled.div<{ viewMode?: ViewModeOptions }>`
+const DateInfoWrapper = styled.div<{ viewMode?: ViewModeOptions }>`
   flex-shrink: 0;
   text-align: right;
-  @media (max-width: 620px) {
-    display: ${(props) => props.viewMode === VIEW_MODE.MINI && " none"};
+  @media (max-width: ${MOBILE_WIDTH}px) {
+    ${(props) => props.viewMode === VIEW_MODE.MINI && "display: none;"}
   }
 `;
 const Content = styled.div`
