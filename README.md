@@ -26,6 +26,7 @@ creator: Woongi Han
 
 ### 날짜검색
 <img width="952" alt="Screen Shot 2022-09-03 at 7 27 34 PM" src="https://user-images.githubusercontent.com/69628701/188266462-d697c9d3-cf02-46d7-a977-1563cd7d99cb.png">
+
 ![ToDoApp__date_selection](https://user-images.githubusercontent.com/69628701/188490247-8a52d237-e7af-4c1d-bc83-ac2555374c6e.gif)
 
 ### 체크검색
@@ -33,10 +34,12 @@ creator: Woongi Han
 
 ## 반응형 - 모바일:
 <img width="284" alt="Screen Shot 2022-09-03 at 7 02 11 PM" src="https://user-images.githubusercontent.com/69628701/188266264-4462970d-0d78-4196-bca6-d2552b1025ef.png">
+
 <img width="286" alt="Screen Shot 2022-09-03 at 7 03 14 PM" src="https://user-images.githubusercontent.com/69628701/188266262-0bff37be-8e8d-4cc3-a6dc-dcb03e2e7a06.png">
+
 <img width="284" alt="Screen Shot 2022-09-03 at 7 17 27 PM" src="https://user-images.githubusercontent.com/69628701/188266259-6d6671f2-2044-4d7c-8a3d-571b8e2e8927.png">
 
-https://youtu.be/CK1Y1K5Xenw
+https://youtu.be/iJ8VVzAbKL4
 
 # 실행방법:
 
@@ -70,12 +73,21 @@ https://youtu.be/CK1Y1K5Xenw
 - Login State - Context API 를 이용한 전역 로그인 상태 관리
 - Sign Up: generator 함수를 사용하여 비밀번호 재확인 및 회원등록 api 요청 / API에서 반환되는 에러(예: 중복 사용자) 와 app 상의 에러(아이디 형식/비밀번호 재확인 오류)를 모아 한번에 처리 
 
-2. Todo Data Fetch
+2. Data Fetch
 - useTodoQuery hook - axios 인스턴스에 React Query를 사용한 데이터 request 및 에러 핸들링
 
-3. Sorting / Filtering
-- 불러온 할일 목록을 최신 등록/최신 수정 순으로 정렬 및 체크됨 상태에 따른 필터링, 텍스트 검색 필터링, 특정 날짜 또는 기간 선택을 통한 검색(등록/수정날짜 중 정렬 선택한 날짜를 기준)
+3. Todos Layout
+- 항목들을 작게보기 / 크게보기 선택 가능
+- 항목들의 기간에 따른 분류(오늘/이번주/이번달/이전) 및 여닫을 수 있게 구현
+- Infinite Scroll 적용
 
-4. Layout
-- 항목들을 크게보기 / 작게보기 선택 가능
+3. Sorting / Filtering
+- 불러온 할일 목록을 최신 등록/최신 수정 순으로 정렬 
+- 텍스트 검색 필터링
+- 특정 날짜 또는 기간 선택을 통한 검색(등록/수정날짜 중 정렬 선택한 날짜를 기준)
+- 체크됨 상태에 따른 필터링 
+
+5. 반응형
+- 모바일 사이즈의 경우 검색옵션을 숨겨지는 것이 default 이며 클릭으로 열고 닫을 수 있게 구현
+- 텍스트 검색 시 입력창 크기 증가
 
