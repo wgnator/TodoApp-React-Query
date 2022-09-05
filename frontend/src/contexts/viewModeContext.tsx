@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useContext, useState } from "react";
+import { createContext, useContext, useState } from "react";
 
 const VIEW_MODE_BUTTON_TEXT = {
   LARGE: "작게 보기",

@@ -5,7 +5,10 @@ export default class Debouncer {
   delayTime: number;
   timeoutID: ReturnType<typeof window.setTimeout>;
 
-  constructor(actionCallback: (event: React.ChangeEvent<HTMLInputElement>) => void, delayTime: number) {
+  constructor(
+    actionCallback: (event: React.ChangeEvent<HTMLInputElement>) => void,
+    delayTime: number
+  ) {
     this.actionCallback = actionCallback;
     this.delayTime = delayTime;
     this.timeoutID = 0;

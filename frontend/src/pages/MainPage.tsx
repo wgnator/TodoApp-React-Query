@@ -1,29 +1,38 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { theme } from "../styles/theme";
-import useSortTodo, { SORT_OPTIONS } from "../hooks/useSortTodo";
+import useSortTodo, { TermDictionary } from "../hooks/useSortTodo";
+import useIntersectionObserver from "../hooks/useIntersectionObserver";
 import { BsPlusCircle } from "react-icons/bs";
 import TodoInputForm from "../components/TodoInputForm";
-import SortControllerComponents from "../components/SortControllerComponents";
+import SortOptionComponents from "../components/SortOptionComponents";
 import LoadingSpinner from "../components/LoadingSpinner";
 import Todo from "../components/Todo";
 import { useTodoContext } from "../contexts/TodoContext";
-import useTodoPageStateReducer, { ACTIONS } from "../hooks/useTodoPageStateReducer";
+import useTodoDisplayStateReducer, { ACTIONS } from "../hooks/useTodoDisplayStateReducer";
 import { Container as TodoStyle } from "../components/Todo";
 import AlertDialog from "../components/AlertDialog";
 import TodoSkeleton from "../components/TodoSkeleton";
-
-import { ReceivedTodoData } from "../types/types";
 import TermSection from "../components/TermSection";
-import { TermDictionary } from "../consts/consts";
+import { ResponsiveRenderer } from "../components/ResponsiveRender";
 
 export default function MainPage() {
-  const { todos, isError, error, isLoading } = useTodoContext();
+  const { todos, fetchNextPage, hasNextPage, isLoading, isFetchingNextPage, isError, error } =
+    useTodoContext();
   const { sortTodos, reduceTodos, selectedOptions, setSelectedOptions } = useSortTodo();
-  const { pageState, dispatch } = useTodoPageStateReducer();
+  const { todoDisplayStates, dispatch } = useTodoDisplayStateReducer();
   const [isShowingAlert, setIsShowingAlert] = useState(false);
-
+  const observerDivRef = useRef(null);
   const closeForm = () => dispatch({ type: ACTIONS.SET_COMPOSING_TODO_ID, todoIDPayload: null });
+
+  useIntersectionObserver(
+    observerDivRef,
+    () => {
+      console.log("observer intersecting");
+      fetchNextPage();
+    },
+    [todos]
+  );
 
   useEffect(() => {
     if (isError) setIsShowingAlert(true);
@@ -31,58 +40,54 @@ export default function MainPage() {
 
   return (
     <Container>
-      <SortControllerComponents
-        selectedOptions={selectedOptions}
-        setSelectedOptions={setSelectedOptions}
-      />
+      <ResponsiveRenderer title="정렬/검색옵션">
+        <SortOptionComponents
+          selectedOptions={selectedOptions}
+          setSelectedOptions={(selectedOptions) => setSelectedOptions(selectedOptions)}
+        />
+      </ResponsiveRenderer>
       <CreateTodo
-        isComposing={pageState.composingTodoID === "NEW"}
+        isComposing={todoDisplayStates.composingTodoID === "NEW"}
         onClick={() =>
-          !pageState.composingTodoID &&
+          !todoDisplayStates.composingTodoID &&
           dispatch({ type: ACTIONS.SET_COMPOSING_TODO_ID, todoIDPayload: "NEW" })
         }
       >
-        {pageState.composingTodoID === "NEW" ? (
+        {todoDisplayStates.composingTodoID === "NEW" ? (
           <TodoInputForm prevData={null} isNew={true} closeForm={closeForm} />
         ) : (
           <PlusCircle />
         )}
       </CreateTodo>
-      {!isLoading && todos
-        ? Object.entries(reduceTodos(sortTodos(todos, selectedOptions)))
-            .sort((a, b) =>
-              selectedOptions.orderBy.order === SORT_OPTIONS.NEWEST_FIRST
-                ? TermDictionary[a[0]].sequence - TermDictionary[b[0]].sequence
-                : TermDictionary[b[0]].sequence - TermDictionary[a[0]].sequence
+      {todos &&
+        reduceTodos(sortTodos(todos)).map(
+          (entry, index) =>
+            entry[1].length > 0 && (
+              <TermSection key={index} termText={TermDictionary[entry[0]].korean}>
+                {entry[1].map((todo) => (
+                  <Todo
+                    key={todo.id}
+                    todo={todo}
+                    dateType={selectedOptions.dateType}
+                    isComposing={todoDisplayStates.composingTodoID === todo.id}
+                    isShowingContent={todoDisplayStates.showingContentTodoID === todo.id}
+                    dispatch={dispatch}
+                  />
+                ))}
+              </TermSection>
             )
-            .map(
-              (entry, index) =>
-                entry[1].length > 0 && (
-                  <TermSection key={index} termText={TermDictionary[entry[0]].korean}>
-                    {entry[1].map((todo) => (
-                      <Todo
-                        key={todo.id}
-                        todo={todo}
-                        showingDateType={selectedOptions.orderBy}
-                        isComposing={pageState.composingTodoID === todo.id}
-                        isShowingContent={pageState.showingContentTodoID === todo.id}
-                        dispatch={dispatch}
-                      />
-                    ))}
-                  </TermSection>
-                )
-            )
-        : isLoading && !error && <TodoSkeleton numOfItems={3} />}
+        )}
+      {isLoading && <TodoSkeleton numOfItems={5} />}
+      {hasNextPage && (
+        <Observer ref={observerDivRef}>
+          <Circle />
+        </Observer>
+      )}
 
       {isShowingAlert && (
         <AlertDialog isCancelable={false} onConfirm={() => setIsShowingAlert(false)}>
           데이터를 불러오는데 실패하였습니다: {error?.message}
         </AlertDialog>
-      )}
-      {isLoading && (
-        <Veil>
-          <Circle />
-        </Veil>
       )}
     </Container>
   );
@@ -102,9 +107,9 @@ const CreateTodo = styled(TodoStyle)<{ isComposing: boolean }>`
     `    
     transition: border-color 0.25s;
     &:hover {
-      border-color: #646cff;
+      border-color: ${theme.primaryColor};
       * {
-        color: #646cff;
+        color: ${theme.primaryColor};
         transition: color 0.25s;
       }
     }
@@ -118,19 +123,13 @@ const PlusCircle = styled(BsPlusCircle)`
   margin: 1rem;
 `;
 
-const Veil = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
 const Circle = styled(LoadingSpinner).attrs((props) => ({
   color: theme.primaryColor,
   backgroundColor: theme.backgroundColor,
-}))`
-  background-color: transparent;
+}))``;
+
+const Observer = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
 `;

@@ -1,4 +1,4 @@
-import React, { Children, ReactElement } from "react";
+import React from "react";
 import styled from "styled-components";
 import { theme } from "../styles/theme";
 import Button from "./Button";
@@ -14,8 +14,24 @@ export default function AlertDialog({ isCancelable, children, onConfirm }: Alert
       <Container>
         <Message>{children}</Message>
         <ButtonsWrapper>
-          <ConfirmButton onClick={() => onConfirm(true)}>확인</ConfirmButton>
-          {isCancelable && <ConfirmButton onClick={() => onConfirm(false)}>취소</ConfirmButton>}
+          <ConfirmButton
+            onClick={(event: React.MouseEvent) => {
+              event.stopPropagation();
+              onConfirm(true);
+            }}
+          >
+            확인
+          </ConfirmButton>
+          {isCancelable && (
+            <ConfirmButton
+              onClick={(event: React.MouseEvent) => {
+                event.stopPropagation();
+                onConfirm(false);
+              }}
+            >
+              취소
+            </ConfirmButton>
+          )}
         </ButtonsWrapper>
       </Container>
     </Veil>

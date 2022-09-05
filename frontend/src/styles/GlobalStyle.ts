@@ -1,5 +1,6 @@
 import { createGlobalStyle } from "styled-components";
 import { MOBILE_WIDTH } from "../consts/consts";
+import { theme } from "./theme";
 
 export const GlobalStyle = createGlobalStyle`
 
@@ -9,7 +10,7 @@ export const GlobalStyle = createGlobalStyle`
   line-height: 24px;
   font-weight: 400;
 
-  color: rgba(255, 255, 255, 0.87);
+  color: white;
   background-color: #242424;
 
   font-synthesis: none;
@@ -85,7 +86,7 @@ table {
   
 *:focus, *:focus-visible {
   outline: none;
-  color: inherit;
+
 }
 
 button {
@@ -101,18 +102,20 @@ button {
   transition: border-color 0.25s, color 0.25s;
 
 &:hover {
-  border-color: #646cff;
-  color: #646cff;
+  border-color: ${theme.primaryColor};
+  color: ${theme.primaryColor};
   * {
-    color: #646cff;
+    color: ${theme.primaryColor};
     transition: color 0.25s;
   }
+  
+  @media (max-width: ${MOBILE_WIDTH}px) {
+  color: white !important; border-color: white !important
+}
 }
 
 }
-@media (max-width: ${MOBILE_WIDTH}px) {
-  *:hover { color: white !important; border-color: white !important;}
-}
+
 textarea {
   font-family: inherit;
 }

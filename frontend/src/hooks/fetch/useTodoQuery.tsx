@@ -1,17 +1,26 @@
 import useTodoRequests from "./useTodoRequests";
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useInfiniteQuery, useMutation, useQueryClient } from "react-query";
 import { ReceivedTodoData } from "../../types/types";
 
 export default function useTodoQuery() {
   const { getTodos, createTodo, updateTodo, deleteTodo } = useTodoRequests();
-  const { isLoading, isError, error, data } = useQuery<ReceivedTodoData[], Error>(
-    ["todos"],
-    getTodos,
-    {
-      retry: 0,
-    }
+  const { fetchNextPage, isLoading, isFetchingNextPage, hasNextPage, isError, error, data } =
+    useInfiniteQuery<{ result: ReceivedTodoData[]; page: number }, Error>(
+      ["todos"],
+      ({ pageParam = 0 }) => getTodos(pageParam),
+      {
+        retry: 0,
+        keepPreviousData: true,
+        getNextPageParam: (lastPage, allPages) => {
+          console.log("last page:", lastPage, allPages);
+          return lastPage.result.length > 1 && Number(lastPage.page) + 1;
+        },
+      }
+    );
+  const todos: ReceivedTodoData[] | undefined = data?.pages.reduce(
+    (prev, page) => [...prev, ...page.result],
+    [] as ReceivedTodoData[]
   );
-  const todos = data;
   const queryClient = useQueryClient();
 
   const handleMutationSuccess = () => {
@@ -28,7 +37,10 @@ export default function useTodoQuery() {
   });
 
   return {
+    fetchNextPage,
     isLoading,
+    isFetchingNextPage,
+    hasNextPage,
     isError,
     error,
     todos,
@@ -37,20 +49,3 @@ export default function useTodoQuery() {
     deleteTodoMutation,
   };
 }
-
-// const App: React.FC = () => {
-//   const { reset } = useQueryErrorResetBoundary()
-//   return (
-//     <ErrorBoundary
-//       onReset={reset}
-//       fallbackRender={({ resetErrorBoundary }) => (
-//         <div>
-//           There was an error!
-//           <Button onClick={() => resetErrorBoundary()}>Try again</Button>
-//         </div>
-//       )}
-//     >
-//       <Page />
-//     </ErrorBoundary>
-//   )
-// }

@@ -1,6 +1,12 @@
 import styled from "styled-components";
 
-export default function LoadingSpinner({ color, backgroundColor }: { color: string; backgroundColor: string }) {
+export default function LoadingSpinner({
+  color,
+  backgroundColor,
+}: {
+  color: string;
+  backgroundColor: string;
+}) {
   return (
     <Container backgroundColor={backgroundColor}>
       <MainCircle color={color}>
@@ -13,6 +19,8 @@ export default function LoadingSpinner({ color, backgroundColor }: { color: stri
 const Container = styled.div<{ backgroundColor: string }>`
   width: 6rem;
   height: 6rem;
+  transform: scale(0.5);
+  transform-origin: top;
   background-color: ${(props) => props.backgroundColor};
   display: flex;
   justify-content: center;
