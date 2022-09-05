@@ -20,11 +20,14 @@ creator: Woongi Han
 
 ### 정렬
 ![ToDoApp__sort_options_date_type](https://user-images.githubusercontent.com/69628701/188488989-24dd5992-5d81-4432-8770-9aa9df772c4f.gif)
+
 ### 텍스트 검색
 ![ToDoApp__sort_options (1)](https://user-images.githubusercontent.com/69628701/188489190-7bfb8d9c-f234-452a-935a-80b355d098ef.gif)
-### 날짜검색:
+
+### 날짜검색
 <img width="952" alt="Screen Shot 2022-09-03 at 7 27 34 PM" src="https://user-images.githubusercontent.com/69628701/188266462-d697c9d3-cf02-46d7-a977-1563cd7d99cb.png">
 ![ToDoApp__date_selection](https://user-images.githubusercontent.com/69628701/188490247-8a52d237-e7af-4c1d-bc83-ac2555374c6e.gif)
+
 ### 체크검색
 ![ToDoApp__sort_options](https://user-images.githubusercontent.com/69628701/188489507-f8928952-b297-4be6-bdd8-f21c935b9319.gif)
 
@@ -58,6 +61,10 @@ https://youtu.be/CK1Y1K5Xenw
 ```
 
 # 세부 구현 사항
+## API
+- [원본 리포지토리](github.com/starkoora/wanted-pre-onboarding-challenge-fe-1-api) 에서 가져와 페이지네이션 등의 약간의 수정을 하였음.
+
+## Frontend
 1. Login / Sign Up
 - User Data Fetch: useLogin hook - Axios 로 인스턴스화 된 request를 사용, Axios Interceptor를 이용한 API 측 에러 핸들링
 - Login State - Context API 를 이용한 전역 로그인 상태 관리
