@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from "react";
+import React, { ReactNode, useMemo, useRef, useState } from "react";
 import styled from "styled-components";
 import SelectBox, { Container as SelectBoxContainer, TriangleDown } from "./SelectBox";
 import { BiSearch } from "react-icons/bi";
@@ -121,10 +121,12 @@ const Calendar = ({
   dateRange: { startDate, endDate },
   reset,
   onClick,
+  children,
 }: {
   dateRange: SelectedDatesType;
   reset: (event: React.MouseEvent) => void;
   onClick: (event: React.MouseEvent) => void;
+  children: ReactNode;
 }) => (
   <CalendarContainer onClick={onClick}>
     <CalendarIcon />
@@ -146,6 +148,7 @@ const Calendar = ({
     </DateText>
     {startDate && <CancelIcon onClick={reset} />}
     {!startDate && <TriangleDown />}
+    {children}
   </CalendarContainer>
 );
 
@@ -250,17 +253,18 @@ export default function SortOptionComponents({
         }}
         dateRange={dateRange}
         reset={onDateReset}
-      />
+      >
+        {isShowingDatePicker && (
+          <DatePicker
+            beginningDate={beginningDate}
+            indicatedDates={todos?.map((todo) => new Date(todo[dateType])) || null}
+            preSelectedDates={dateRange}
+            setDates={setDates}
+            close={() => setIsShowingDatePicker(false)}
+          />
+        )}
+      </Calendar>
       <FilterByChecked selectedOption={checkedState} setOption={setFilterByCheckedOption} />
-      {isShowingDatePicker && (
-        <DatePicker
-          beginningDate={beginningDate}
-          indicatedDates={todos?.map((todo) => new Date(todo[dateType])) || null}
-          preSelectedDates={dateRange}
-          setDates={setDates}
-          close={() => setIsShowingDatePicker(false)}
-        />
-      )}
     </Container>
   );
 }
@@ -367,6 +371,7 @@ const CalendarContainer = styled(SelectBoxContainer)`
   display: flex;
   justify-content: space-between;
   position: relative;
+
   @media (max-width: ${MOBILE_WIDTH}px) {
     width: calc(50% - 0.5rem);
   }

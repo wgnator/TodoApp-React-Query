@@ -229,15 +229,16 @@ const Container = styled.div`
   right: 0;
   background-color: ${theme.backgroundColor};
   z-index: 10;
-  width: 400px;
+  width: 360px;
 
-  border: white 3px solid;
+  border: white 2px solid;
   overflow: hidden;
   border-radius: 10px;
 
   @media (max-width: ${MOBILE_WIDTH}px) {
     flex-direction: column;
-    width: 100% !important;
+    left: -2px;
+    width: 80vw;
     padding: 5%;
     overflow: auto;
   }
