@@ -1,9 +1,9 @@
-import { useContext } from "react";
-import { AuthState } from "../contexts/AuthContext";
+import { Navigate, useLocation } from "react-router-dom";
+import { useAuthContext } from "../contexts/AuthContext";
 import Layout from "../pages/Layout";
-import LoginPage from "../pages/LoginPage";
 
 export default function ProtectedRoutes() {
-  const { userTokenState } = useContext(AuthState);
-  return userTokenState ? <Layout /> : <LoginPage />;
+  const { userTokenState } = useAuthContext();
+  const location = useLocation();
+  return userTokenState ? <Layout /> : <Navigate to="/login" state={{ from: location }} replace />;
 }

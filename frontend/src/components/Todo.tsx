@@ -164,10 +164,11 @@ const DateInfoWrapper = styled.div<{ viewMode?: ViewModeOptions }>`
     ${(props) => props.viewMode === VIEW_MODE.MINI && "display: none;"}
   }
 `;
-const Content = styled.div`
+const Content = styled.pre`
   margin: 1rem 0;
   width: 100%;
   word-wrap: break-word;
+  white-space: pre-wrap;
   line-height: 1.5rem;
 `;
 

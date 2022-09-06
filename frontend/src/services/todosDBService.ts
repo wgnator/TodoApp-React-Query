@@ -12,7 +12,7 @@ export const todosDBService = axios.create({
 todosDBService.interceptors.response.use(
   (response) => response,
   (error) => {
-    throw new Error("네트워크 에러");
+    return Promise.reject(error);
   }
 );
 

@@ -1,9 +1,15 @@
+import { useAuthContext } from "../../contexts/AuthContext";
 import { todosDBService } from "../../services/todosDBService";
 import { ReceivedTodoData, SentTodoData } from "../../types/types";
+import { getItemFromStorage } from "../useLogin";
 
 export default function useTodoRequests() {
-  const token = localStorage.getItem("userToken") || "";
-  if (!token) throw new Error("저장된 로그인 정보가 없습니다.");
+  const token = getItemFromStorage("userToken") || "";
+  const { logout } = useAuthContext();
+  if (!token) {
+    console.error("저장된 로그인 정보가 없습니다.");
+    logout();
+  }
 
   const getTodos = async (page: number) =>
     await todosDBService

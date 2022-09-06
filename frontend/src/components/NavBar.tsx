@@ -1,11 +1,11 @@
 import { useContext } from "react";
 import styled from "styled-components";
 import { MOBILE_WIDTH } from "../consts/consts";
-import { AuthState } from "../contexts/AuthContext";
+import { useAuthContext } from "../contexts/AuthContext";
 import { ViewModeContext } from "../contexts/ViewModeContext";
 
 export default function NavBar() {
-  const { userName, logout } = useContext(AuthState);
+  const { userName, logout } = useAuthContext();
   const { viewMode, toggleViewMode } = useContext(ViewModeContext);
   return (
     <Container>

@@ -12,7 +12,7 @@ const usersDBService = axios.create({
 usersDBService.interceptors.response.use(
   (response) => response,
   (error) => {
-    throw new Error(error.response.data.details);
+    return Promise.reject(new Error("네트워크 에러: " + error.message));
   }
 );
 
