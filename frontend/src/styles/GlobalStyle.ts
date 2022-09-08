@@ -100,7 +100,15 @@ button {
   background-color: inherit;
   cursor: pointer;
   transition: border-color 0.25s, color 0.25s;
-
+&:disabled:hover {
+  border-color: inherit;
+  color: inherit;
+  * {
+    color: inherit;
+    transition: color 0.25s;
+  }
+  cursor: inherit;
+}
 &:hover {
   border-color: ${theme.primaryColor};
   color: ${theme.primaryColor};

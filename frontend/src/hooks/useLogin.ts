@@ -1,19 +1,11 @@
 import { AxiosResponse } from "axios";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { usersDataService } from "../services/usersDBService";
-
-export const getItemFromStorage = (key: string) =>
-  localStorage.getItem(key) || sessionStorage.getItem(key);
-
-const removeItemFromStorage = (key: string) => {
-  localStorage.removeItem(key);
-  sessionStorage.removeItem(key);
-};
+import { usersDBService } from "../services/usersDBService";
 
 export default function useLogin() {
-  const [userTokenState, setUserTokenState] = useState(getItemFromStorage("userToken"));
-  const [userName, setUserName] = useState(getItemFromStorage("userName"));
+  const [userToken, setUserToken] = useState("");
+  const [userName, setUserName] = useState("");
+
   const login = ({
     id,
     pw,
@@ -23,28 +15,21 @@ export default function useLogin() {
     pw: string;
     persistLogin: boolean;
   }): Promise<void | AxiosResponse | Error> => {
-    const storage = persistLogin ? localStorage : sessionStorage;
     if (!id || !pw)
       return new Promise(() => new Error("아이디 또는 패스워드 입력이 잘못되었습니다."));
     else
-      return usersDataService
-        .post("login", { email: id, password: pw })
+      return usersDBService
+        .post("login", { email: id, password: pw, persistLogin })
         .then((response) => {
-          storage.setItem("userToken", response.data.token);
-          storage.setItem("userName", id.split("@")[0]);
-          setUserTokenState(storage.getItem("userToken"));
-          setUserName(storage.getItem("userName"));
-        })
-        .catch((error) => {
-          throw new Error(error?.response?.data?.details || error.message);
+          setUserName(response.data.userName);
+          setUserToken(response.data.token);
         });
   };
 
   const logout = (): void => {
-    removeItemFromStorage("userToken");
-    removeItemFromStorage("userName");
-    setUserTokenState(getItemFromStorage("userToken"));
-    setUserName(getItemFromStorage("userName"));
+    setUserToken("");
+    setUserName("");
+    usersDBService.get("/logout");
   };
 
   function* signUp(
@@ -62,11 +47,10 @@ export default function useLogin() {
       });
     }
 
-    return usersDataService.post("create", { email: id, password: pw }).catch((error) => {
-      console.log("error caught", error);
-      throw new Error(error?.response?.data?.details || error.message);
+    return usersDBService.post("create", { email: id, password: pw }).catch((error) => {
+      throw new Error(error.message);
     });
   }
 
-  return { userTokenState, userName, login, logout, signUp };
+  return { userToken, setUserToken, userName, login, logout, signUp };
 }

@@ -20,12 +20,15 @@ function LoginPage() {
     pw: false,
   });
   const { login, signUp } = useAuthContext();
+
   const progressSignUp = useRef<ReturnType<typeof signUp>>();
   const [alertMessage, setAlertMessage] = useState("");
   const [pwConfirmationModalState, setPwConfirmationModalState] = useState({
     isShowing: false,
     password: "",
   });
+  const passwordInputRef = useRef<HTMLInputElement>(null);
+  const loginButtonRef = useRef<HTMLButtonElement>(null);
   const navigate = useNavigate();
   const location: Location & { state: any } = useLocation();
   const from = location.state?.from?.pathname || "/";
@@ -36,6 +39,13 @@ function LoginPage() {
       pw: checkIsValidFormatPassword(user.pw),
     });
   }, [user]);
+
+  const onKeyDownEnter = (event: React.KeyboardEvent) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      loginButtonRef?.current?.click();
+    }
+  };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -111,6 +121,7 @@ function LoginPage() {
               value={user.pw}
               placeholder="비밀번호"
               onChange={handleInputChange}
+              onKeyDown={onKeyDownEnter}
             />
             {user.pw && !isUserInputValid.pw && (
               <InvalidMessage>{INVALID_MESSAGE.pw}</InvalidMessage>
@@ -135,6 +146,7 @@ function LoginPage() {
             <LoginButton
               disabled={!isUserInputValid.id || !isUserInputValid.pw}
               onClick={onClickLogin}
+              ref={loginButtonRef}
             >
               로그인
             </LoginButton>

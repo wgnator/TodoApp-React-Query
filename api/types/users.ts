@@ -3,6 +3,7 @@ export interface User {
   email: string;
   password: string;
   createdAt: string;
+  refreshToken: string;
 }
 
-export type UserInput = Pick<User, "email" | "password">;
+export type UserInput = Pick<User, "email" | "password"> & { persistLogin: boolean };

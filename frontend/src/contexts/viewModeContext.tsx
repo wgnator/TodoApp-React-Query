@@ -1,8 +1,8 @@
 import { createContext, useContext, useState } from "react";
 
 const VIEW_MODE_BUTTON_TEXT = {
-  LARGE: "작게 보기",
-  MINI: "크게 보기",
+  LARGE: "접어 보기",
+  MINI: "펼쳐 보기",
 };
 
 export const VIEW_MODE = {

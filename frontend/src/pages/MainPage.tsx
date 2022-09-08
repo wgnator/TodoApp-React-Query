@@ -17,8 +17,7 @@ import TermSection from "../components/TermSection";
 import { ResponsiveRenderer } from "../components/ResponsiveRender";
 
 export default function MainPage() {
-  const { todos, fetchNextPage, hasNextPage, isLoading, isFetchingNextPage, isError, error } =
-    useTodoContext();
+  const { todos, fetchNextPage, hasNextPage, isLoading, isError, error } = useTodoContext();
   const { sortTodos, reduceTodos, selectedOptions, setSelectedOptions } = useSortTodo();
   const { todoDisplayStates, dispatch } = useTodoDisplayStateReducer();
   const [isShowingAlert, setIsShowingAlert] = useState(false);
