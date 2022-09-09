@@ -9,16 +9,10 @@ const useRefreshToken = () => {
       const response = await usersDBService.get("/refresh", {
         withCredentials: true,
       });
-      if (response.data)
-        setUserToken((prev) => {
-          console.log(JSON.stringify(prev));
-          console.log(response.data.token);
-          return response.data.token;
-        });
-      console.log("refreshing access token... result:", response);
+      if (response.data) setUserToken(response.data.token);
+      console.log("refreshing access token...");
       return response.data.token;
     } catch {
-      console.log("refresh access token failed");
       setUserToken("");
       throw new Error("refresh access token failed");
     }

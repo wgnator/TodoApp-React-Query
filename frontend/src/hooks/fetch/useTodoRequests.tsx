@@ -21,16 +21,13 @@ export default function useTodoRequests() {
       });
 
   const getTodosCount = async () =>
-    await todosDBService
-      .get("/?countOnly=true", { headers: { Authorization: userToken } })
-      .then((response) => {
-        console.log("data count:", response.data);
-        return response.data.data;
-      });
-  // const getTodoById = async (id: string) => await todosDBService.get<ReceivedTodoData>(`/${id}`, { headers: { Authorization: userToken } });
+    await todosDBService.get("/?countOnly=true").then((response) => {
+      return response.data.data;
+    });
+  // const getTodoById = async (id: string) => await todosDBService.get<ReceivedTodoData>(`/${id}`);
 
   const createTodo = async (todo: SentTodoData) =>
-    await todosDBService.post<SentTodoData>("/", todo, { headers: { Authorization: userToken } });
+    await todosDBService.post<SentTodoData>("/", todo);
 
   const updateTodo = async (todo: SentTodoData) =>
     await todosDBService.put<SentTodoData>(`/${todo.id}`, todo, {

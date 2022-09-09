@@ -11,7 +11,7 @@ import type { UserInput } from "../types/users";
 // 로그인
 export const login = async (req: Request, res: Response) => {
   const { email, password, persistLogin }: UserInput = req.body;
-
+  console.log("persistLogin:", persistLogin);
   const { isValid, message } = loginValidator({ email, password });
   if (!isValid) {
     return res.status(StatusCodes.BAD_REQUEST).send(createError(message));
@@ -21,7 +21,7 @@ export const login = async (req: Request, res: Response) => {
   console.log("foundUser:", foundUser, "isMatch:", isMatch);
   if (foundUser && isMatch) {
     const accessToken = createAccessToken(email);
-    const refreshToken = createRefreshToken(foundUser, persistLogin ? "1d" : undefined);
+    const refreshToken = createRefreshToken(foundUser, persistLogin ? undefined : "1d");
     res.cookie("jwt", refreshToken, {
       httpOnly: true,
       sameSite: "none",

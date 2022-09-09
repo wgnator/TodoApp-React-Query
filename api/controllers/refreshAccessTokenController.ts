@@ -16,7 +16,6 @@ export const handleRefreshAccessToken = (req: Request, res: Response) => {
   if (!foundUser) return res.status(StatusCodes.FORBIDDEN).send(createError("User Not Found"));
 
   jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET as Secret, (err, decoded) => {
-    console.log("decoded:", decoded);
     if (typeof decoded === "object" && Object.keys(decoded).includes("email"))
       if (err || foundUser?.email !== decoded["email"]) return res.status(StatusCodes.FORBIDDEN);
       else {
@@ -28,10 +27,10 @@ export const handleRefreshAccessToken = (req: Request, res: Response) => {
             secure: true,
             maxAge: 24 * 60 * 60 * 1000,
           });
-          console.log("refresh token renewed. previous:", refreshToken, "new:", newRefreshToken);
+          console.log("refresh token renewed");
         }
         const accessToken = createAccessToken(foundUser.email);
-        console.log("token refreshed");
+        console.log("access token refreshed");
         res.status(StatusCodes.OK).json({ token: accessToken });
       }
   });

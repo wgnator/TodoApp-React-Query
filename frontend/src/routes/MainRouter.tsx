@@ -1,4 +1,5 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
+import Layout from "../pages/Layout";
 import LoginPage from "../pages/LoginPage";
 import MainPage from "../pages/MainPage";
 import { PageNotFound } from "../pages/PageNotFound";
@@ -8,7 +9,6 @@ export default function MainRouter() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/login" element={<LoginPage />} />
         <Route path="/" element={<ProtectedRoutes />}>
           <Route path="" element={<MainPage />} />
           <Route path=":showingTodoIDParam" element={<MainPage />} />

@@ -12,7 +12,6 @@ export const usersDBService = axios.create({
 usersDBService.interceptors.response.use(
   (response) => response,
   (error) => {
-    console.log(error.response?.status >= 400 && error);
     const errorMessage =
       error.response?.status >= 400
         ? `${error.response.status} error :${error.response.data.details}`

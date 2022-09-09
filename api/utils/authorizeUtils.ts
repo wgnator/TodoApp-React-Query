@@ -7,10 +7,12 @@ export const createAccessToken = (email: string) => {
     expiresIn: "30s",
   });
 };
-export const createRefreshToken = (user: User, expiresIn?: "1d") => {
-  const refreshToken = jwt.sign({ email: user.email }, process.env.REFRESH_TOKEN_SECRET as Secret, {
-    expiresIn: expiresIn,
-  });
+export const createRefreshToken = (user: User, expiresIn?: "1d" | undefined) => {
+  const refreshToken = expiresIn
+    ? jwt.sign({ email: user.email }, process.env.REFRESH_TOKEN_SECRET as Secret, {
+        expiresIn: expiresIn,
+      })
+    : jwt.sign({ email: user.email }, process.env.REFRESH_TOKEN_SECRET as Secret);
   userService.writeRefreshToken(user, refreshToken);
   return refreshToken;
 };

@@ -2,3 +2,4 @@ node_modules
 dist
 db/db.json
 .env
+public

@@ -15,12 +15,12 @@ export default function useLogin() {
     pw: string;
     persistLogin: boolean;
   }): Promise<void | AxiosResponse | Error> => {
-    if (!id || !pw)
-      return new Promise(() => new Error("아이디 또는 패스워드 입력이 잘못되었습니다."));
+    if (!id || !pw) return Promise.reject(new Error("아이디 또는 패스워드 입력이 잘못되었습니다."));
     else
       return usersDBService
         .post("login", { email: id, password: pw, persistLogin })
         .then((response) => {
+          if (persistLogin) localStorage.setItem("userID", id);
           setUserName(response.data.userName);
           setUserToken(response.data.token);
         });
@@ -29,6 +29,7 @@ export default function useLogin() {
   const logout = (): void => {
     setUserToken("");
     setUserName("");
+    localStorage.removeItem("userID");
     usersDBService.get("/logout");
   };
 
@@ -42,9 +43,7 @@ export default function useLogin() {
     const confirmingPassword = yield;
 
     if (pw !== confirmingPassword) {
-      return new Promise(() => {
-        throw new Error("다시 입력하신 비밀번호가 맞지 않습니다.");
-      });
+      return Promise.reject(new Error("다시 입력하신 비밀번호가 맞지 않습니다."));
     }
 
     return usersDBService.post("create", { email: id, password: pw }).catch((error) => {

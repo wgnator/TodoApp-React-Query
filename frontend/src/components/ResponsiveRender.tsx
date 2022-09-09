@@ -14,7 +14,6 @@ export const ResponsiveRenderer = ({ children, title }: { children: ReactNode; t
     window.innerWidth <= MOBILE_WIDTH ? VIEWPORT_TYPE.MOBILE : VIEWPORT_TYPE.DESKTOP;
   const [viewportType, setViewportType] = useState(detectViewportSize());
   useEffect(() => {
-    console.log(viewportType);
     const onWindowResize = () => setViewportType(detectViewportSize);
     window.addEventListener("resize", onWindowResize);
     return () => window.removeEventListener("resize", onWindowResize);

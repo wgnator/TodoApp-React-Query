@@ -165,11 +165,12 @@ const DateInfoWrapper = styled.div<{ viewMode?: ViewModeOptions }>`
   }
 `;
 const Content = styled.pre`
-  margin: 1rem 0;
+  padding: 1rem 1rem;
   width: 100%;
   word-wrap: break-word;
   white-space: pre-wrap;
   line-height: 1.5rem;
+  font-family: inherit;
 `;
 
 const Checkmark = styled(FcCheckmark)`
