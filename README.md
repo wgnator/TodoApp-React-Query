@@ -1,6 +1,8 @@
 # ToDoApp
 creator: Woongi Han
 
+deployed site: https://nator-todoapp.herokuapp.com/
+
 # Preview
 
 ## Login Page
@@ -65,23 +67,25 @@ https://youtu.be/iJ8VVzAbKL4
 
 # 세부 구현 사항
 ## API
-- [원본 리포지토리](github.com/starkoora/wanted-pre-onboarding-challenge-fe-1-api) 에서 가져와 페이지네이션 등의 약간의 수정을 하였음.
+- [원본 리포지토리](github.com/starkoora/wanted-pre-onboarding-challenge-fe-1-api) 에서 가져와 Pagination, JWT authentication 등을 추가 구현하였음.
 
 ## Frontend
 1. Login / Sign Up
-- Login: useLogin hook - Axios 로 인스턴스화 된 request를 사용, Axios Interceptor를 이용한 API 측 에러(아이디/비밀번호 오류) 핸들링
-- Login State - Local Storage 에 토큰 저장
+- Login: JWT Authentication 구현
+  - 로그인 또는 회원가입 시 Access Token 과 Refresh Token 발행. 새로운 Refresh Token은 API 측에서 사용자 데이터와 함께 보관하며, http-only cookie 로 응답 / Access Token 은 frontend 측에서 AuthContext 에 저장.
+  - Refresh Token: "로그인 상태 유지" 옵션 체크의 경우 만료 날짜는 영원히 / 체크되지 않은 경우 1일이나, 만료되기 23시간 전에 접속한 경우 계속 refresh 됨.
+  - Access Token: 1분마다 만료 됨. 만료되어 403 Forbidden 에러를 받을 경우 Axios Interceptor는 새로운 토큰 발행을 요청, 성공할 시 실패한 이전 요청을 재요청.
 - Sign Up: 비밀번호 재확인 및 회원 등록 api 요청 / API에서 반환되는 에러(예: 중복 사용자) 와 app 상의 에러(아이디 형식/비밀번호 재확인 오류)를 모아 한번에 처리 
 
 2. Data Fetch
 - useTodoQuery hook - axios 인스턴스에 React Query를 사용하여 페이지네이션된 데이터 펫칭 및 에러 핸들링
 
 3. Todos Layout
-- 항목들을 작게보기 / 크게보기 선택 가능
+- 항목들을 접어보기 / 펼쳐보기 선택 가능
 - 항목들의 기간에 따른 분류(오늘/이번주/이번달/이전) 및 여닫을 수 있게 구현
 - Infinite Scroll 적용
 
-3. Sorting / Filtering
+4. Sorting / Filtering
 - 불러온 할일 목록을 최신 등록/최신 수정 순으로 정렬 
 - 텍스트 검색 필터링 (Debouncer 적용)
 - 특정 날짜 또는 기간 선택을 통한 검색(등록/수정날짜 중 정렬 선택한 날짜를 기준)
