@@ -1,5 +1,8 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
+import Layout from "../pages/Layout";
+import LoginPage from "../pages/LoginPage";
 import MainPage from "../pages/MainPage";
+import { PageNotFound } from "../pages/PageNotFound";
 import ProtectedRoutes from "./ProtectedRoutes";
 
 export default function MainRouter() {
@@ -10,6 +13,7 @@ export default function MainRouter() {
           <Route path="" element={<MainPage />} />
           <Route path=":showingTodoIDParam" element={<MainPage />} />
         </Route>
+        <Route path="*" element={<PageNotFound />} />
       </Routes>
     </BrowserRouter>
   );

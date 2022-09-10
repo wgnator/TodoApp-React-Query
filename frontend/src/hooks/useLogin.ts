@@ -1,31 +1,39 @@
 import { AxiosResponse } from "axios";
 import { useState } from "react";
-import { usersDataService } from "../services/usersDBService";
+import { usersDBService } from "../services/usersDBService";
 
 export default function useLogin() {
-  const [userTokenState, setUserTokenState] = useState(localStorage.getItem("userToken"));
-  const [userName, setUserName] = useState(localStorage.getItem("userName"));
+  const [userToken, setUserToken] = useState("");
+  const [userName, setUserName] = useState("");
 
-  const login = (id: string, pw: string): Promise<void | AxiosResponse | Error> => {
-    if (!id || !pw)
-      return new Promise(() => new Error("일치하는 아이디 또는 비밀번호가 없습니다."));
+  const login = ({
+    id,
+    pw,
+    persistLogin,
+  }: {
+    id: string;
+    pw: string;
+    persistLogin: boolean;
+  }): Promise<void | AxiosResponse | Error> => {
+    if (!id || !pw) return Promise.reject(new Error("아이디 또는 패스워드 입력이 잘못되었습니다."));
     else
-      return usersDataService.post("login", { email: id, password: pw }).then((response) => {
-        localStorage.setItem("userToken", response.data.token);
-        localStorage.setItem("userName", id.split("@")[0]);
-        setUserTokenState(localStorage.getItem("userToken"));
-        setUserName(localStorage.getItem("userName"));
-      });
+      return usersDBService
+        .post("login", { email: id, password: pw, persistLogin })
+        .then((response) => {
+          if (persistLogin) localStorage.setItem("userID", id);
+          setUserName(response.data.userName);
+          setUserToken(response.data.token);
+        });
   };
 
   const logout = (): void => {
-    localStorage.removeItem("userToken");
-    localStorage.removeItem("userName");
-    setUserTokenState(localStorage.getItem("userToken"));
-    setUserName(localStorage.getItem("userName"));
+    setUserToken("");
+    setUserName("");
+    localStorage.removeItem("userID");
+    usersDBService.get("/logout");
   };
 
-  const signUp = function* (
+  function* signUp(
     args: { id: string; pw: string } | string
   ): Generator<boolean | undefined | Promise<void>> {
     const id = (typeof args === "object" && args?.id) || null;
@@ -35,13 +43,13 @@ export default function useLogin() {
     const confirmingPassword = yield;
 
     if (pw !== confirmingPassword) {
-      return new Promise(() => {
-        throw new Error("다시 입력하신 비밀번호가 맞지 않습니다.");
-      });
+      return Promise.reject(new Error("다시 입력하신 비밀번호가 맞지 않습니다."));
     }
 
-    return usersDataService.post("create", { email: id, password: pw });
-  };
+    return usersDBService.post("create", { email: id, password: pw }).catch((error) => {
+      throw new Error(error.message);
+    });
+  }
 
-  return { userTokenState, userName, login, logout, signUp };
+  return { userToken, setUserToken, userName, login, logout, signUp };
 }

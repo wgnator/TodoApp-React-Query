@@ -67,7 +67,7 @@ const Input = styled.input`
 `;
 
 const TextArea = styled.textarea`
-  height: 5rem;
+  height: 10rem;
   border-radius: 8px;
   resize: none;
   padding: 0.5rem;

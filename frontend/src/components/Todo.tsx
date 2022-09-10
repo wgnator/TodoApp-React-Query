@@ -164,11 +164,13 @@ const DateInfoWrapper = styled.div<{ viewMode?: ViewModeOptions }>`
     ${(props) => props.viewMode === VIEW_MODE.MINI && "display: none;"}
   }
 `;
-const Content = styled.div`
-  margin: 1rem 0;
+const Content = styled.pre`
+  padding: 1rem 1rem;
   width: 100%;
   word-wrap: break-word;
+  white-space: pre-wrap;
   line-height: 1.5rem;
+  font-family: inherit;
 `;
 
 const Checkmark = styled(FcCheckmark)`

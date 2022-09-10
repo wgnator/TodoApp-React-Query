@@ -39,16 +39,20 @@ export default function AlertDialog({ isCancelable, children, onConfirm }: Alert
 }
 
 const Veil = styled.div`
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   top: 0;
   left: 0;
-  z-index: 10;
+  z-index: 100;
   position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   background-color: rgba(0, 0, 0, 0.4);
 `;
 const Container = styled.div`
-  width: 25rem;
+  max-width: 25rem;
+  width: 80%;
   height: 10rem;
   padding: 1rem;
   display: flex;
@@ -58,9 +62,7 @@ const Container = styled.div`
   background-color: ${theme.backgroundColor};
   border: 1px solid white;
   border-radius: 10px;
-  position: absolute;
-  left: calc((100vw - 25rem) / 2);
-  top: calc((100vh - 10rem) / 2);
+  margin: auto;
 `;
 const Message = styled.h4``;
 

@@ -9,10 +9,9 @@ export default function useTodoQuery() {
       ["todos"],
       ({ pageParam = 0 }) => getTodos(pageParam),
       {
-        retry: 0,
+        retry: 1,
         keepPreviousData: true,
         getNextPageParam: (lastPage, allPages) => {
-          console.log("last page:", lastPage, allPages);
           return lastPage.result.length > 1 && Number(lastPage.page) + 1;
         },
       }

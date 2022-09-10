@@ -1,11 +1,11 @@
 import express from "express";
 
 import * as todoController from "../controllers/todoController";
-import { validateToken } from "../middleware/validateToken";
+import { verifyToken } from "../middleware/verifyToken";
 
 const router = express.Router();
 
-router.use(validateToken);
+router.use(verifyToken);
 
 router.get("/", todoController.getTodos);
 router.post("/", todoController.createTodo);
