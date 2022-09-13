@@ -1,7 +1,7 @@
 # ToDoApp
 creator: Woongi Han
 
-deployed site: https://nator-todoapp.herokuapp.com/
+deployed site: https://nator-todoapp.netlify.app/
 
 # Preview
 
