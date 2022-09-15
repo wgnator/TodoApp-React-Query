@@ -1,12 +1,11 @@
-import React, { ReactNode, useMemo, useRef, useState } from "react";
+import React, { ReactNode, useRef, useState } from "react";
 import styled from "styled-components";
-import SelectBox, { Container as SelectBoxContainer, TriangleDown } from "./SelectBox";
+import SelectBox, { Container as SelectBoxContainer, TriangleDown } from "../SelectBox";
 import { BiSearch } from "react-icons/bi";
 import { GoCalendar } from "react-icons/go";
 import { MdCancel } from "react-icons/md";
 import { ImCheckmark2 } from "react-icons/im";
-import Debouncer from "../utils/Debouncer";
-import { DEBOUNCER_DELAY_TIME, MOBILE_WIDTH } from "../consts/consts";
+
 import {
   DateTypes,
   DATE_TYPE,
@@ -14,22 +13,20 @@ import {
   FILTER_BY_CHECKED_OPTIONS,
   ORDER,
   OrderTypes,
-  SelectedOptionsType,
   sortOptionsDictionary,
-} from "../hooks/useSortTodo";
-import DatePicker, { SelectedDatesType } from "./DatePicker";
-import { useTodoContext } from "../contexts/TodoContext";
-import { theme } from "../styles/theme";
-import { compareAsc } from "date-fns";
+} from "../../hooks/useSortTodo";
+
+
+import { theme } from "../../styles/theme";
+import { SelectedDatesType } from "../DatePicker";
+import { MOBILE_WIDTH } from "../../consts/consts";
+
 
 const { CHECKED, UNCHECKED, UNFILTERED } = FILTER_BY_CHECKED_OPTIONS;
 
-type SortOptionsPropsType = {
-  selectedOptions: SelectedOptionsType;
-  setSelectedOptions: (selectedOptions: SelectedOptionsType) => void;
-};
 
-const OrderSelection = ({
+
+export const OrderSelection = ({
   dateType,
   orderBy,
   setOption,
@@ -70,7 +67,7 @@ const OrderSelection = ({
   </OrderSelectionContainer>
 );
 
-const TextSearch = ({
+export const TextSearch = ({
   textToSearch,
   setSearchOnChange,
   reset,
@@ -117,7 +114,7 @@ const TextSearch = ({
   );
 };
 
-const Calendar = ({
+export const Calendar = ({
   dateRange: { startDate, endDate },
   reset,
   onClick,
@@ -152,7 +149,7 @@ const Calendar = ({
   </CalendarContainer>
 );
 
-const FilterByChecked = ({
+export const FilterByChecked = ({
   selectedOption,
   setOption,
 }: {
@@ -186,118 +183,14 @@ const FilterByChecked = ({
   );
 };
 
-export default function SortOptionComponents({
-  selectedOptions,
-  setSelectedOptions,
-}: SortOptionsPropsType) {
-  const { dateType, orderBy, searchString, checkedState, dateRange } = selectedOptions;
-  const [isShowingDatePicker, setIsShowingDatePicker] = useState(false);
-  const { todos } = useTodoContext();
-  const beginningDate = useMemo(
-    () =>
-      todos
-        ? todos
-            .map((todo) => new Date(todo.createdAt))
-            .reduce((prev, curr) => (compareAsc(curr, prev) > 0 ? prev : curr))
-        : new Date(),
-    [todos]
-  );
 
-  const setOrderOption = (dateType: DateTypes, order: OrderTypes) => {
-    setSelectedOptions({ ...selectedOptions, dateType: dateType, orderBy: order });
-  };
-
-  const setTextSearchOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedOptions({ ...selectedOptions, searchString: event.target.value });
-  };
-
-  const searchTextWithDebouncer = new Debouncer(
-    setTextSearchOnChange,
-    DEBOUNCER_DELAY_TIME
-  ).build();
-
-  const setFilterByCheckedOption = (selectedCheckedValue: boolean | null) => {
-    setSelectedOptions({ ...selectedOptions, checkedState: selectedCheckedValue });
-  };
-
-  const setDates = (
-    selectedDates: { startDate?: Date | null | undefined; endDate?: Date | null | undefined } | null
-  ): void =>
-    setSelectedOptions({
-      ...selectedOptions,
-      dateRange: { ...dateRange, ...selectedDates },
-    });
-
-  const onDateReset = (event: React.MouseEvent) => {
-    event.stopPropagation();
-    setIsShowingDatePicker(false);
-    setSelectedOptions({
-      ...selectedOptions,
-      dateRange: { startDate: null, endDate: null },
-    });
-  };
-  return (
-    <Container>
-      <OrderSelection dateType={dateType} orderBy={orderBy} setOption={setOrderOption} />
-      <TextSearchPlaceholder>
-        <TextSearch
-          textToSearch={searchString}
-          setSearchOnChange={searchTextWithDebouncer}
-          reset={() => setSelectedOptions({ ...selectedOptions, searchString: "" })}
-        />
-      </TextSearchPlaceholder>
-      <Calendar
-        onClick={(event: React.MouseEvent) => {
-          event.stopPropagation();
-          setIsShowingDatePicker(!isShowingDatePicker);
-        }}
-        dateRange={dateRange}
-        reset={onDateReset}
-      >
-        {isShowingDatePicker && (
-          <DatePicker
-            beginningDate={beginningDate}
-            indicatedDates={todos?.map((todo) => new Date(todo[dateType])) || null}
-            preSelectedDates={dateRange}
-            setDates={setDates}
-            close={() => setIsShowingDatePicker(false)}
-          />
-        )}
-      </Calendar>
-      <FilterByChecked selectedOption={checkedState} setOption={setFilterByCheckedOption} />
-    </Container>
-  );
-}
-
-const Container = styled.div`
-  width: 100%;
-  position: relative;
-  display: flex;
-  position: relative;
-  justify-content: space-between;
-  gap: 1rem;
-  option,
-  input {
-    border: none;
-  }
-  input {
-    outline: none;
-  }
-  @media (max-width: ${MOBILE_WIDTH}px) {
-    display: flex;
-    flex-wrap: wrap;
-    > * {
-      width: calc(50% - 0.5rem);
-    }
-  }
-`;
 const OrderSelectionContainer = styled(SelectBox)`
   width: 20%;
   option {
     width: 30%;
   }
 `;
-const TextSearchPlaceholder = styled.div``;
+
 const TextSearchContainer = styled(SelectBoxContainer)<{ isFocus: boolean }>`
   position: relative;
   border: 2px white solid;
@@ -343,7 +236,7 @@ const TextSearchContainer = styled(SelectBoxContainer)<{ isFocus: boolean }>`
       width: 100%;
     }
   }
-`;
+`
 const Input = styled.input`
   height: 100%;
   background-color: #242424;

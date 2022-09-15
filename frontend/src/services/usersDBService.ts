@@ -1,5 +1,5 @@
 import axios from "axios";
-import { USERS_DB_API_BASE_URL } from "../consts/api_consts";
+import { USERS_DB_API_BASE_URL } from "../consts/api";
 
 export const usersDBService = axios.create({
   baseURL: USERS_DB_API_BASE_URL,

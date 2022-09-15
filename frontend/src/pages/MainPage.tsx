@@ -5,7 +5,7 @@ import useSortTodo, { TermDictionary } from "../hooks/useSortTodo";
 import useIntersectionObserver from "../hooks/useIntersectionObserver";
 import { BsPlusCircle } from "react-icons/bs";
 import TodoInputForm from "../components/TodoInputForm";
-import SortOptionComponents from "../components/SortOptionComponents";
+
 import LoadingSpinner from "../components/LoadingSpinner";
 import Todo from "../components/Todo";
 import { useTodoContext } from "../contexts/TodoContext";
@@ -15,6 +15,7 @@ import AlertDialog from "../components/AlertDialog";
 import TodoSkeleton from "../components/TodoSkeleton";
 import TermSection from "../components/TermSection";
 import { ResponsiveRenderer } from "../components/ResponsiveRender";
+import SortOptionBar from "../components/SortOptionBar/SortOptionBar";
 
 export default function MainPage() {
   const { todos, fetchNextPage, hasNextPage, isLoading, isError, error } = useTodoContext();
@@ -40,7 +41,7 @@ export default function MainPage() {
   return (
     <Container>
       <ResponsiveRenderer title="정렬/검색옵션">
-        <SortOptionComponents
+        <SortOptionBar
           selectedOptions={selectedOptions}
           setSelectedOptions={(selectedOptions) => setSelectedOptions(selectedOptions)}
         />

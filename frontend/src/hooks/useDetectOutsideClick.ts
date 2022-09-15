@@ -1,24 +1,26 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 
 export default function useDetectOutsideClick(
   targetElements: React.RefObject<HTMLElement>[],
   callback: () => void
 ) {
+  const listener = useRef((event: MouseEvent) => {});
+
   useEffect(() => {
     const hasClickedOutsideElement = (event: MouseEvent, targetElement: HTMLElement | null) => {
       return !!(targetElement && !targetElement.contains(<Node>event?.target));
     };
-    const clickedOutsideElementListener = (event: MouseEvent) => {
-      const hasClickedOutsideAllElements = targetElements
-        .map((ref) => hasClickedOutsideElement(event, ref.current))
-        .includes(false)
-        ? false
-        : true;
+    listener.current = (event: MouseEvent) => {
+      console.log("clicked", targetElements);
+      const hasClickedOutsideAllElements = targetElements.every((ref) =>
+        hasClickedOutsideElement(event, ref.current)
+      );
+      console.log(hasClickedOutsideAllElements);
       if (hasClickedOutsideAllElements) callback();
     };
-    window.addEventListener("click", clickedOutsideElementListener);
+    window.addEventListener("click", listener.current, true);
     return () => {
-      window.removeEventListener("click", clickedOutsideElementListener);
+      window.removeEventListener("click", listener.current, true);
     };
   }, []);
 }
