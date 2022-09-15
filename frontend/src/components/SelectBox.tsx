@@ -14,7 +14,6 @@ export default function SelectBox({
 }) {
   const [isSelecting, setIsSelecting] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-
   useDetectOutsideClick([containerRef], () => setIsSelecting(false));
 
   return (
@@ -44,7 +43,6 @@ export const Container = styled.div`
   border: 2px white solid;
   height: 3rem;
   border-radius: 8px;
-  width: 10rem;
   padding: 0.3rem 0.3rem;
   display: flex;
   align-items: center;
@@ -67,9 +65,9 @@ const SelectedOption = styled.div`
 const OptionsWrapper = styled.div`
   z-index: 1;
   position: absolute;
-  top: -3px;
-  left: -3px;
-  padding: 0.5rem 0;
+  top: -2px;
+  left: -2px;
+  padding: 1rem 0;
   border: 2px white solid;
   border-radius: 8px;
   width: 100%;
@@ -77,6 +75,7 @@ const OptionsWrapper = styled.div`
   background-color: ${theme.backgroundColor};
   color: white;
   display: flex;
+  gap: 0.5rem;
   flex-direction: column;
   align-items: center;
   -webkit-appearance: none;

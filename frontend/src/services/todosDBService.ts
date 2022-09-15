@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect } from "react";
-import { TODOS_DB_API_BASE_URL } from "../consts/api_consts";
+import { TODOS_DB_API_BASE_URL } from "../consts/api";
 import { useAuthContext } from "../contexts/AuthContext";
 import useRefreshToken from "../hooks/useRefreshToken";
 
