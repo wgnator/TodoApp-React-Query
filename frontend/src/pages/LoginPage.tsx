@@ -27,7 +27,7 @@ function LoginPage() {
     isShowing: false,
     password: "",
   });
-  const passwordInputRef = useRef<HTMLInputElement>(null);
+
   const loginButtonRef = useRef<HTMLButtonElement>(null);
   const navigate = useNavigate();
   const location: Location & { state: any } = useLocation();

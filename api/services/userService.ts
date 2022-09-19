@@ -3,11 +3,12 @@ import type { User } from "../types/users";
 
 export const createUser = async ({ email, password }: Pick<User, "email" | "password">) => {
   const newUser = create<User>({ email, password });
-
-  db.data?.users.push(newUser);
-  await db.write();
-
-  return newUser;
+  if (db.data) {
+    db.data.users.push(newUser);
+    db.data.todos[newUser.id] = [];
+    await db.write();
+    return newUser;
+  } else throw new Error("DB접속에 문제가 있습니다.");
 };
 
 export const findUser = (predicate: (user: User) => boolean) => {

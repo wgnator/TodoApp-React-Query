@@ -5,7 +5,10 @@ import { useAuthContext } from "../contexts/AuthContext";
 import { ViewModeContext } from "../contexts/ViewModeContext";
 
 export default function NavBar() {
-  const { userName, logout } = useAuthContext();
+  const {
+    userInfo: { userName },
+    logout,
+  } = useAuthContext();
   const { viewMode, toggleViewMode } = useContext(ViewModeContext);
   return (
     <Container>

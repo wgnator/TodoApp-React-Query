@@ -1,11 +1,14 @@
 import { AxiosResponse } from "axios";
 import { useState } from "react";
+import { useQueryClient } from "react-query";
 import { usersDBService } from "../services/usersDBService";
+
+const initialUserInfo = { userName: "", userId: "" };
 
 export default function useLogin() {
   const [userToken, setUserToken] = useState("");
-  const [userName, setUserName] = useState("");
-
+  const [userInfo, setUserInfo] = useState(initialUserInfo);
+  const queryClient = useQueryClient();
   const login = ({
     id,
     pw,
@@ -21,15 +24,16 @@ export default function useLogin() {
         .post("login", { email: id, password: pw, persistLogin })
         .then((response) => {
           if (persistLogin) localStorage.setItem("userID", id);
-          setUserName(response.data.userName);
+          setUserInfo({ userName: response.data.userName, userId: response.data.userId });
           setUserToken(response.data.token);
         });
   };
 
   const logout = (): void => {
     setUserToken("");
-    setUserName("");
+    setUserInfo(initialUserInfo);
     localStorage.removeItem("userID");
+    queryClient.removeQueries("todos");
     usersDBService.get("/logout");
   };
 
@@ -51,5 +55,5 @@ export default function useLogin() {
     });
   }
 
-  return { userToken, setUserToken, userName, login, logout, signUp };
+  return { userToken, setUserToken, userInfo, login, logout, signUp };
 }

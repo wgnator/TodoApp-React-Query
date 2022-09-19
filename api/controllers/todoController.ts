@@ -6,12 +6,14 @@ import { createError, createResponse } from "../utils/responseUtils";
 import { TODO_VALIDATION_ERRORS } from "../utils/validator";
 import type { TodoInput } from "../types/todos";
 
-export const createTodo = async (req: Request, res: Response) => {
-  const { title, content }: TodoInput = req.body;
-
+export const createTodo = async (
+  req: Request<{ id: string }, unknown, TodoInput, { userId: string }>,
+  res: Response
+) => {
+  const { title, content } = req.body;
+  const { userId } = req.query;
   if (title) {
-    const todo = await todoService.createTodo({ title, content });
-
+    const todo = await todoService.createTodo(userId, { userId, title, content, checked: false });
     return res.status(StatusCodes.OK).send(createResponse(todo));
   } else {
     return res
@@ -20,9 +22,17 @@ export const createTodo = async (req: Request, res: Response) => {
   }
 };
 
-export const getTodos = async (req: Request, res: Response) => {
-  const { itemsPerPage = 10, page = 0, countOnly } = req.query;
-  const todos = todoService.findTodos();
+export const getTodos = async (
+  req: Request<
+    unknown,
+    unknown,
+    unknown,
+    { itemsPerPage: number; page: number; countOnly: boolean; userId: string }
+  >,
+  res: Response
+) => {
+  const { itemsPerPage = 10, page = 0, countOnly, userId } = req.query;
+  const todos = todoService.findTodos(userId);
 
   const pageEndIndex = todos ? Math.max(todos.length - Number(itemsPerPage) * Number(page), 0) : 0;
   const pageStartIndex = todos
@@ -43,10 +53,13 @@ export const getTodos = async (req: Request, res: Response) => {
   }
 };
 
-export const getTodoById = (req: Request, res: Response) => {
+export const getTodoById = (
+  req: Request<{ id: string }, unknown, unknown, { userId: string }>,
+  res: Response
+) => {
   const { id: todoId } = req.params;
-
-  const todo = todoService.findTodo((todo) => todo.id === todoId);
+  const { userId } = req.query;
+  const todo = todoService.findTodo(userId, (todo) => todo.id === todoId);
 
   if (todo) {
     return res.status(StatusCodes.OK).send(createResponse(todo));
@@ -57,11 +70,14 @@ export const getTodoById = (req: Request, res: Response) => {
   }
 };
 
-export const updateTodo = async (req: Request, res: Response) => {
+export const updateTodo = async (
+  req: Request<{ id: string }, unknown, TodoInput, { userId: string }>,
+  res: Response
+) => {
   const todoId = req.params.id;
   const { title, content, checked } = req.body;
-
-  const todo = todoService.findTodo((todo) => todo.id === todoId);
+  const { userId } = req.query;
+  const todo = todoService.findTodo(userId, (todo) => todo.id === todoId);
 
   if (todo) {
     await todoService.updateTodo(todo, { title, content, checked });
@@ -74,10 +90,13 @@ export const updateTodo = async (req: Request, res: Response) => {
   }
 };
 
-export const deleteTodo = async (req: Request, res: Response) => {
+export const deleteTodo = async (
+  req: Request<{ id: string }, unknown, unknown, { userId: string }>,
+  res: Response
+) => {
   const { id: todoId } = req.params;
-
-  const todo = todoService.findTodo((todo) => todo.id === todoId);
+  const { userId } = req.query;
+  const todo = todoService.findTodo(userId, (todo) => todo.id === todoId);
 
   if (!todo) {
     return res
@@ -85,7 +104,7 @@ export const deleteTodo = async (req: Request, res: Response) => {
       .send(createError(TODO_VALIDATION_ERRORS.TODO_SOMETHING_WRONG));
   }
 
-  await todoService.deleteTodo(todo);
+  await todoService.deleteTodo(userId, todo);
 
   return res.status(StatusCodes.OK).send(createResponse(null));
 };

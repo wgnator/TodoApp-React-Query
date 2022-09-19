@@ -60,6 +60,7 @@ export default function MainPage() {
         )}
       </CreateTodo>
       {todos &&
+        todos.length > 0 &&
         reduceTodos(sortTodos(todos)).map(
           (entry, index) =>
             entry[1].length > 0 && (

@@ -8,6 +8,6 @@
     "moduleResolution": "node",
     "esModuleInterop": true
   },
-  "include": ["**/*", "./types/environment.d.ts"],
+  "include": ["**/*"],
   "exclude": ["./node_modules"]
 }
