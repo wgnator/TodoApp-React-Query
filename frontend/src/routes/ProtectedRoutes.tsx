@@ -1,5 +1,4 @@
-import { useEffect } from "react";
-import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { useLayoutEffect } from "react";
 import { useAuthContext } from "../contexts/AuthContext";
 import useRefreshToken from "../hooks/useRefreshToken";
 import Layout from "../pages/Layout";
@@ -9,7 +8,7 @@ export default function ProtectedRoutes() {
   const { userToken, setUserInfo } = useAuthContext();
   const refresh = useRefreshToken();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!userToken) {
       const userInfo = localStorage.getItem("userInfo");
       if (userInfo) {
