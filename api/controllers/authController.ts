@@ -11,14 +11,12 @@ import type { UserInput } from "../types/users";
 // 로그인
 export const login = async (req: Request, res: Response) => {
   const { email, password, persistLogin }: UserInput = req.body;
-  console.log("persistLogin:", persistLogin);
   const { isValid, message } = loginValidator({ email, password });
   if (!isValid) {
     return res.status(StatusCodes.BAD_REQUEST).send(createError(message));
   }
   const foundUser = userService.findUser((user) => user.email === email);
   const isMatch = foundUser ? await bcrypt.compare(password, foundUser.password) : false;
-  console.log("foundUser:", foundUser, "isMatch:", isMatch);
   if (foundUser && isMatch) {
     const accessToken = createAccessToken(email);
     const refreshToken = createRefreshToken(foundUser, persistLogin ? undefined : "1d");
@@ -31,6 +29,7 @@ export const login = async (req: Request, res: Response) => {
     return res.status(StatusCodes.OK).send({
       message: "성공적으로 로그인 했습니다",
       userName: foundUser.email.split("@")[0],
+      userId: foundUser.id,
       token: accessToken,
     });
   } else {

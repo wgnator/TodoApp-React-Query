@@ -9,7 +9,7 @@ export const handleRefreshAccessToken = (req: Request, res: Response) => {
   const cookies = req.cookies;
   console.log("cookies:", cookies);
   if (!cookies?.jwt)
-    return res.status(StatusCodes.UNAUTHORIZED).send(createError("Refresh Token Unavailable"));
+    return res.status(StatusCodes.UNAUTHORIZED).send(createError("Refresh token not found in your cookie"));
   const refreshToken: string = cookies.jwt;
 
   const foundUser = userService.findUser((user) => user.refreshToken === refreshToken);

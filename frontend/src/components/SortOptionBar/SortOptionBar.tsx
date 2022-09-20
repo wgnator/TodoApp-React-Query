@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react"
+import React, { useMemo, useState } from "react";
 import Debouncer from "../../utils/Debouncer";
 import { DEBOUNCER_DELAY_TIME, MOBILE_WIDTH } from "../../consts/consts";
 import { DateTypes, OrderTypes, SelectedOptionsType } from "../../hooks/useSortTodo";
@@ -22,14 +22,13 @@ export default function SortOptionBar({
   const { todos } = useTodoContext();
   const beginningDate = useMemo(
     () =>
-      todos
+      todos && todos.length > 0
         ? todos
             .map((todo) => new Date(todo.createdAt))
             .reduce((prev, curr) => (compareAsc(curr, prev) > 0 ? prev : curr))
         : new Date(),
     [todos]
   );
-
   const setOrderOption = (dateType: DateTypes, order: OrderTypes) => {
     setSelectedOptions({ ...selectedOptions, dateType: dateType, orderBy: order });
   };
@@ -80,6 +79,7 @@ export default function SortOptionBar({
         }}
         dateRange={dateRange}
         reset={onDateReset}
+        closeDatePicker={()=>setIsShowingDatePicker(false)}
       >
         {isShowingDatePicker && (
           <DatePicker

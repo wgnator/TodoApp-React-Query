@@ -63,8 +63,9 @@ export default function DatePicker({
   const windowRef = useRef<HTMLDivElement>(null);
   const numOfMonths = useMemo<number>(
     () => differenceInCalendarMonths(today.current, beginningDate) + 1,
-    []
+    [beginningDate]
   );
+  console.log("begin:", beginningDate, "today", today.current)
   const [scrollTop, setScrollTop] = useState(0);
   const { startDate, endDate } = preSelectedDates;
 
@@ -82,7 +83,7 @@ export default function DatePicker({
 
   useEffect(() => {
     setScrollTop(Math.max(MONTH_HEIGHT * (numOfMonths - 1), 0));
-  }, [MONTH_HEIGHT]);
+  }, [numOfMonths]);
 
   useEffect(() => {
     if (windowRef.current) windowRef.current.scrollTop = scrollTop;
@@ -93,8 +94,6 @@ export default function DatePicker({
     windowRef?.current?.addEventListener("scroll", rerenderOnScroll);
     return () => windowRef?.current?.removeEventListener("scroll", rerenderOnScroll);
   }, []);
-
-  useDetectOutsideClick([containerRef], () => close());
 
   return (
     <Container ref={containerRef}>

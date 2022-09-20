@@ -5,7 +5,10 @@ import { useAuthContext } from "../contexts/AuthContext";
 import { ViewModeContext } from "../contexts/ViewModeContext";
 
 export default function NavBar() {
-  const { userName, logout } = useAuthContext();
+  const {
+    userInfo: { userName },
+    logout,
+  } = useAuthContext();
   const { viewMode, toggleViewMode } = useContext(ViewModeContext);
   return (
     <Container>
@@ -64,4 +67,5 @@ const LogoutButton = styled.button`
 
 const ViewMode = styled.button`
   height: 2.5rem;
+  flex-shrink: 0;
 `;

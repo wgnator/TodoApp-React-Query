@@ -1,11 +1,14 @@
 import { AxiosResponse } from "axios";
 import { useState } from "react";
+import { useQueryClient } from "react-query";
 import { usersDBService } from "../services/usersDBService";
+
+const initialUserInfo = { userName: "", userId: "" };
 
 export default function useLogin() {
   const [userToken, setUserToken] = useState("");
-  const [userName, setUserName] = useState("");
-
+  const [userInfo, setUserInfo] = useState(initialUserInfo);
+  const queryClient = useQueryClient();
   const login = ({
     id,
     pw,
@@ -20,16 +23,18 @@ export default function useLogin() {
       return usersDBService
         .post("login", { email: id, password: pw, persistLogin })
         .then((response) => {
-          if (persistLogin) localStorage.setItem("userID", id);
-          setUserName(response.data.userName);
+          const userInfo = { userName: response.data.userName, userId: response.data.userId }
+          if (persistLogin) localStorage.setItem("userInfo", JSON.stringify(userInfo))
+          setUserInfo(userInfo);
           setUserToken(response.data.token);
         });
   };
 
   const logout = (): void => {
     setUserToken("");
-    setUserName("");
-    localStorage.removeItem("userID");
+    setUserInfo(initialUserInfo);
+    localStorage.removeItem("userInfo");
+    queryClient.removeQueries("todos");
     usersDBService.get("/logout");
   };
 
@@ -51,5 +56,5 @@ export default function useLogin() {
     });
   }
 
-  return { userToken, setUserToken, userName, login, logout, signUp };
+  return { userToken, setUserToken, userInfo, setUserInfo, login, logout, signUp };
 }
