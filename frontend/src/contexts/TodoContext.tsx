@@ -25,7 +25,6 @@ export function TodoContextProvider({ children }: { children: ReactNode }) {
         hasNextPage,
         isLoading,
         isFetchingNextPage,
-
         createTodoMutation,
         updateTodoMutation,
         deleteTodoMutation,

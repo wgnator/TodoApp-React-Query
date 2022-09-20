@@ -8,7 +8,7 @@ export default function useTodoRequests() {
     userToken,
     userInfo: { userId },
   } = useAuthContext();
-  if (!userToken || !userId) {
+  if (!userToken) {
     console.error("저장된 로그인 정보가 없습니다.");
     logout();
   }

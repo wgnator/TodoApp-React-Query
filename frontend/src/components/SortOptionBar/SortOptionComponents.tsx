@@ -16,15 +16,12 @@ import {
   sortOptionsDictionary,
 } from "../../hooks/useSortTodo";
 
-
 import { theme } from "../../styles/theme";
 import { SelectedDatesType } from "../DatePicker";
 import { MOBILE_WIDTH } from "../../consts/consts";
-
+import useDetectOutsideClick from "../../hooks/useDetectOutsideClick";
 
 const { CHECKED, UNCHECKED, UNFILTERED } = FILTER_BY_CHECKED_OPTIONS;
-
-
 
 export const OrderSelection = ({
   dateType,
@@ -119,13 +116,19 @@ export const Calendar = ({
   reset,
   onClick,
   children,
+  closeDatePicker
 }: {
   dateRange: SelectedDatesType;
   reset: (event: React.MouseEvent) => void;
   onClick: (event: React.MouseEvent) => void;
   children: ReactNode;
-}) => (
-  <CalendarContainer onClick={onClick}>
+  closeDatePicker: ()=>void
+}) => {
+  const containerRef = useRef(null)
+  useDetectOutsideClick([containerRef], ()=> closeDatePicker())
+
+  return (
+  <CalendarContainer ref={containerRef} onClick={onClick}>
     <CalendarIcon />
     <DateText>
       {!startDate && "전체"}
@@ -148,6 +151,7 @@ export const Calendar = ({
     {children}
   </CalendarContainer>
 );
+        }
 
 export const FilterByChecked = ({
   selectedOption,
@@ -182,7 +186,6 @@ export const FilterByChecked = ({
     </FilterByCheckedContainer>
   );
 };
-
 
 const OrderSelectionContainer = styled(SelectBox)`
   width: 20%;
@@ -236,7 +239,7 @@ const TextSearchContainer = styled(SelectBoxContainer)<{ isFocus: boolean }>`
       width: 100%;
     }
   }
-`
+`;
 const Input = styled.input`
   height: 100%;
   background-color: #242424;
@@ -256,8 +259,6 @@ const CancelIcon = styled(MdCancel)`
   flex-shrink: 0;
 `;
 const CalendarContainer = styled(SelectBoxContainer)`
-  width: 30%;
-  min-width: 9rem;
   display: flex;
   justify-content: space-between;
   position: relative;

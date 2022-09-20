@@ -6,13 +6,21 @@ import Layout from "../pages/Layout";
 import LoginPage from "../pages/LoginPage";
 
 export default function ProtectedRoutes() {
-  const { userToken } = useAuthContext();
+  const { userToken, setUserInfo } = useAuthContext();
   const refresh = useRefreshToken();
 
   useEffect(() => {
-    if (localStorage.getItem("userID")) {
-      console.log("refreshing at ProtectedRoutes");
-      refresh();
+    if (!userToken) {
+      const userInfo = localStorage.getItem("userInfo");
+      if (userInfo) {
+        const parsedUserInfo = JSON.parse(userInfo);
+        console.log(parsedUserInfo);
+        if (Object.keys(parsedUserInfo).every((e) => e === "userId" || e === "userName"))
+          setUserInfo(parsedUserInfo);
+        else return;
+        console.log("refreshing at ProtectedRoutes");
+        refresh();
+      }
     }
   }, []);
 

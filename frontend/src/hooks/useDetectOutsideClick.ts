@@ -14,7 +14,10 @@ export default function useDetectOutsideClick(
       const hasClickedOutsideAllElements = targetElements.every((ref) =>
         hasClickedOutsideElement(event, ref.current)
       );
-      if (hasClickedOutsideAllElements) callback();
+      if (hasClickedOutsideAllElements) {
+        console.log('has clicked outside:', targetElements)
+        callback();
+      }
     };
     window.addEventListener("click", listener.current, true);
     return () => {

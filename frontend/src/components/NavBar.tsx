@@ -67,4 +67,5 @@ const LogoutButton = styled.button`
 
 const ViewMode = styled.button`
   height: 2.5rem;
+  flex-shrink: 0;
 `;

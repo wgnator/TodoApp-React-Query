@@ -23,8 +23,9 @@ export default function useLogin() {
       return usersDBService
         .post("login", { email: id, password: pw, persistLogin })
         .then((response) => {
-          if (persistLogin) localStorage.setItem("userID", id);
-          setUserInfo({ userName: response.data.userName, userId: response.data.userId });
+          const userInfo = { userName: response.data.userName, userId: response.data.userId }
+          if (persistLogin) localStorage.setItem("userInfo", JSON.stringify(userInfo))
+          setUserInfo(userInfo);
           setUserToken(response.data.token);
         });
   };
@@ -32,7 +33,7 @@ export default function useLogin() {
   const logout = (): void => {
     setUserToken("");
     setUserInfo(initialUserInfo);
-    localStorage.removeItem("userID");
+    localStorage.removeItem("userInfo");
     queryClient.removeQueries("todos");
     usersDBService.get("/logout");
   };
@@ -55,5 +56,5 @@ export default function useLogin() {
     });
   }
 
-  return { userToken, setUserToken, userInfo, login, logout, signUp };
+  return { userToken, setUserToken, userInfo, setUserInfo, login, logout, signUp };
 }

@@ -29,7 +29,6 @@ export default function SortOptionBar({
         : new Date(),
     [todos]
   );
-
   const setOrderOption = (dateType: DateTypes, order: OrderTypes) => {
     setSelectedOptions({ ...selectedOptions, dateType: dateType, orderBy: order });
   };
@@ -80,6 +79,7 @@ export default function SortOptionBar({
         }}
         dateRange={dateRange}
         reset={onDateReset}
+        closeDatePicker={()=>setIsShowingDatePicker(false)}
       >
         {isShowingDatePicker && (
           <DatePicker

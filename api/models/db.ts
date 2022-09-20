@@ -10,11 +10,7 @@ import type { User } from "../types/users";
 const __dirname = path.resolve();
 
 export interface Data {
-<<<<<<< HEAD
   todos: { [userId: string]: Todo[] };
-=======
-  todos: Todo[];
->>>>>>> 30cbf06011e1f30d0cd0e1afafc15f243975ab2d
   users: User[];
 }
 
@@ -46,11 +42,7 @@ export const createConnection = async () => {
   // Read data from JSON file, this will set db.data content
   await db.read();
 
-<<<<<<< HEAD
   db.data ||= { todos: {}, users: [] };
-=======
-  db.data ||= { todos: [], users: [] };
->>>>>>> 30cbf06011e1f30d0cd0e1afafc15f243975ab2d
   // Write db.data content to db.json
   await db.write();
 };

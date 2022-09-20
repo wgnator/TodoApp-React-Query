@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # API 실행
 
 ```bash
@@ -196,7 +195,3 @@
   "token": "eyJhbGciOiJIUzI1NiJ9.YXNkZkBhc2RmYXNkZi5jb20.h-oLZnV0pCeNKa_AM3ilQzerD2Uj7bKUn1xDft5DzOk"
 }
 ```
-=======
-# ToDo App
-This is for deployment.
->>>>>>> 30cbf06011e1f30d0cd0e1afafc15f243975ab2d
